@@ -834,9 +834,9 @@ function readAnswer(el){
   Array.prototype.slice.call(el.querySelectorAll('.item')).forEach(function(it){
     var lab = it.querySelector('label.opt');
     var cb = lab ? lab.querySelector('input[type=checkbox]') : null;
-    if(cb && cb.checked){
-      var star = it.querySelector('.star.on') ? ' ★' : '';
-      parts.push(labelText(lab) + star);
+    var starred = !!it.querySelector('.star.on');
+    if((cb && cb.checked) || starred){
+      parts.push(labelText(lab) + (starred ? ' (★시급)' : ''));
     }
   });
   Array.prototype.slice.call(el.querySelectorAll('label.opt')).forEach(function(lab){
@@ -931,8 +931,9 @@ function pdfFileName(){
   var company = (document.getElementById('f_company').value || '미입력').replace(/[\\/:*?"<>|]/g,'_');
   return '사전진단_질의서_' + company + '.pdf';
 }
-// 작성본 PDF 생성: html2canvas로 데스크톱 폭(1000px) 고정 캡처 → jsPDF에 '페이지 폭에 수식으로 맞춰' 직접 배치
-// (html2pdf의 자동 배치가 오프셋을 일으켜 좌/우가 짤리던 문제를 근본 차단)
+// 작성본 PDF 생성:
+//  1) html2canvas로 데스크톱 폭(1000px) 고정 캡처(좁은 창에서도 동일, 좌우 짤림 없음)
+//  2) 질문/블록 경계(브레이크 포인트)에서 페이지를 잘라 배치 → 페이지 넘김 시 내용 겹침/반토막 방지
 function makePdfBlob(){
   var el = document.getElementById('sheet');
   var prevY = window.scrollY;
@@ -943,22 +944,50 @@ function makePdfBlob(){
     scale: 1.5, useCORS: true, backgroundColor: '#ffffff',
     windowWidth: 1000, width: 1000, scrollX: 0, scrollY: 0
   }).then(function(canvas){
+    // 자를 수 있는 지점(각 블록의 상단)을 캔버스 y좌표로 수집 — pdf-mode(데스크톱 고정) 상태라 라이브 위치와 일치
+    var sheetTop = el.getBoundingClientRect().top;
+    var scaleY = canvas.height / el.offsetHeight;
+    var bset = {0:true};
+    Array.prototype.slice.call(
+      el.querySelectorAll('.sec-head, .intro, .q, .brow, .catlbl, .cat-block, .rank, .thanks')
+    ).forEach(function(b){
+      var y = Math.round((b.getBoundingClientRect().top - sheetTop) * scaleY);
+      if(y > 4 && y < canvas.height) bset[y] = true;
+    });
     cleanup();
+    var breaks = Object.keys(bset).map(Number).sort(function(a,b){ return a-b; });
+
     var JsPDF = window.jspdf.jsPDF;
     var pdf = new JsPDF('p', 'mm', 'a4');
     var pageW = pdf.internal.pageSize.getWidth();
     var pageH = pdf.internal.pageSize.getHeight();
     var margin = 8;
     var imgW = pageW - margin*2;               // 항상 페이지 폭에 맞춤 → 좌/우 짤림 불가
-    var imgH = canvas.height * imgW / canvas.width;
-    var usableH = pageH - margin*2;
-    var imgData = canvas.toDataURL('image/jpeg', 0.85);
-    var heightLeft = imgH, page = 0, pos = margin;
-    while(heightLeft > 0){
-      if(page > 0){ pdf.addPage(); pos = margin - (imgH - heightLeft); }
-      pdf.addImage(imgData, 'JPEG', margin, pos, imgW, imgH, '', 'FAST');
-      heightLeft -= usableH;
-      page++;
+    var pxPerMm = canvas.width / imgW;
+    var usablePx = (pageH - margin*2) * pxPerMm;
+
+    var start = 0, first = true;
+    while(start < canvas.height - 1){
+      var target = start + usablePx;
+      var cut;
+      if(target >= canvas.height){
+        cut = canvas.height;
+      } else {
+        cut = 0;
+        for(var i=0;i<breaks.length;i++){ if(breaks[i] > start + 4 && breaks[i] <= target) cut = breaks[i]; }
+        if(cut <= start) cut = Math.floor(target); // 한 블록이 한 페이지보다 큰 경우만 강제 컷
+      }
+      var sliceH = cut - start;
+      var sub = document.createElement('canvas');
+      sub.width = canvas.width; sub.height = sliceH;
+      var ctx = sub.getContext('2d');
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,sub.width,sub.height);
+      ctx.drawImage(canvas, 0, start, canvas.width, sliceH, 0, 0, canvas.width, sliceH);
+      var imgData = sub.toDataURL('image/jpeg', 0.85);
+      if(!first) pdf.addPage();
+      pdf.addImage(imgData, 'JPEG', margin, margin, imgW, sliceH / pxPerMm, '', 'FAST');
+      first = false;
+      start = cut;
     }
     return pdf.output('blob');
   }).catch(function(e){ cleanup(); throw e; });
