@@ -12,8 +12,4 @@
   to = "/.netlify/functions/send"
   status = 200
 
-# HTML 폼을 사이트 첫 화면으로 쓰려면 파일명을 index.html 로 두거나 아래 주석을 해제하세요.
-# [[redirects]]
-#   from = "/"
-#   to = "/사전진단_질의서_작성용.html"
-#   status = 200
+# index.html 이 사이트 첫 화면(루트 /)으로 자동 제공됩니다.
