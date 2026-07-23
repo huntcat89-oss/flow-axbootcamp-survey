@@ -325,7 +325,7 @@
       <div class="brow">
         <div class="blabel">플로우 사용 현황</div>
         <div class="bval track"><div class="opts">
-          <label class="opt"><input type="checkbox">사용 중 (기간: <input type="text" class="inl" placeholder="___" style="min-width:90px">)</label>
+          <label class="opt"><input type="checkbox">사용 중 (약 <input type="text" class="inl" placeholder="___" style="min-width:56px">개월)</label>
           <label class="opt"><input type="checkbox">무료 체험 중</label>
           <label class="opt"><input type="checkbox">도입 예정</label>
         </div></div>
@@ -553,8 +553,8 @@
       </div>
     </div>
 
-    <div class="q track">
-      <div class="q-title">Q15. 다음 중 설명할 수 있는 개념을 모두 체크해 주세요. <span class="qh">모르는 항목은 체크하지 않아도 됩니다</span></div>
+    <div class="q">
+      <div class="q-title">Q15. 다음 중 설명할 수 있는 개념을 모두 체크해 주세요. <span class="qh">모르는 항목은 체크하지 않아도 됩니다 (선택)</span></div>
       <div class="opts grid3">
         <label class="opt"><input type="checkbox">프롬프트</label>
         <label class="opt"><input type="checkbox">AI 에이전트</label>
@@ -608,42 +608,39 @@
     <div class="sec-head"><div class="sec-num">07</div><div class="sec-title">4주 후 만들고 싶은 것</div></div>
     <div class="intro" style="margin-bottom:16px">
       <p style="font-weight:700;color:var(--purple)">아래는 슈퍼100 AX 부트캠프 참가 기업이 4주 안에 직접 만들어 가져가는 것들의 카탈로그입니다.</p>
-      <p>1순위 1개, 예비 1개에 체크해 주세요. 최종 주제는 담당 멘토와 함께 우리 회사에 맞게 다듬습니다.</p>
+      <p><b>체크하면 예비, 오른쪽 별표(★)를 누르면 1순위</b>로 자동 지정됩니다. (1순위는 1개) 최종 주제는 담당 멘토와 함께 우리 회사에 맞게 다듬습니다.</p>
     </div>
 
     <div class="catalog track">
+      <p class="q-note" style="margin-top:0">체크 = <b>예비</b> · 오른쪽 <b style="color:var(--star)">★</b> 별표 = <b>1순위</b>(1개, 자동 지정)</p>
       <div class="cat-block">
         <h3>A. 대시보드 — 한눈에 보는 화면</h3>
-        <div class="opts grid2">
-          <label class="opt"><input type="checkbox">경영 현황판 (매출·핵심지표·업무 진척)</label>
-          <label class="opt"><input type="checkbox">팀별 업무 현황판 (누가 무엇을, 어디까지)</label>
-          <label class="opt"><input type="checkbox">프로젝트 진척 대시보드 (지연·리스크 표시)</label>
-          <label class="opt"><input type="checkbox">OKR 목표 진척 대시보드</label>
-          <label class="opt"><input type="checkbox">고객 문의(CS) 처리 현황판</label>
-          <label class="opt"><input type="checkbox">영업 파이프라인 현황판</label>
+        <div class="opts grid2 catopts">
+          <div class="item"><label class="opt"><input type="checkbox">경영 현황판 (매출·핵심지표·업무 진척)</label><button type="button" class="star" title="1순위 표시">★</button></div>
+          <div class="item"><label class="opt"><input type="checkbox">팀별 업무 현황판 (누가 무엇을, 어디까지)</label><button type="button" class="star" title="1순위 표시">★</button></div>
+          <div class="item"><label class="opt"><input type="checkbox">프로젝트 진척 대시보드 (지연·리스크 표시)</label><button type="button" class="star" title="1순위 표시">★</button></div>
+          <div class="item"><label class="opt"><input type="checkbox">OKR 목표 진척 대시보드</label><button type="button" class="star" title="1순위 표시">★</button></div>
+          <div class="item"><label class="opt"><input type="checkbox">고객 문의(CS) 처리 현황판</label><button type="button" class="star" title="1순위 표시">★</button></div>
+          <div class="item"><label class="opt"><input type="checkbox">영업 파이프라인 현황판</label><button type="button" class="star" title="1순위 표시">★</button></div>
         </div>
       </div>
       <div class="cat-block">
         <h3>B. 자동화 — 손이 가던 일을 없애기</h3>
-        <div class="opts grid2">
-          <label class="opt"><input type="checkbox">주간 보고서 자동 생성·발송</label>
-          <label class="opt"><input type="checkbox">회의록 → 할 일 자동 등록</label>
-          <label class="opt"><input type="checkbox">마감 임박·지연 업무 자동 알림</label>
-          <label class="opt"><input type="checkbox">아침 업무 브리핑 자동 발송</label>
-          <label class="opt"><input type="checkbox">반복 업무 자동 생성·배정 (매주/매월)</label>
-          <label class="opt"><input type="checkbox">취합 데이터 자동 집계 리포트</label>
+        <div class="opts grid2 catopts">
+          <div class="item"><label class="opt"><input type="checkbox">주간 보고서 자동 생성·발송</label><button type="button" class="star" title="1순위 표시">★</button></div>
+          <div class="item"><label class="opt"><input type="checkbox">회의록 → 할 일 자동 등록</label><button type="button" class="star" title="1순위 표시">★</button></div>
+          <div class="item"><label class="opt"><input type="checkbox">마감 임박·지연 업무 자동 알림</label><button type="button" class="star" title="1순위 표시">★</button></div>
+          <div class="item"><label class="opt"><input type="checkbox">아침 업무 브리핑 자동 발송</label><button type="button" class="star" title="1순위 표시">★</button></div>
+          <div class="item"><label class="opt"><input type="checkbox">반복 업무 자동 생성·배정 (매주/매월)</label><button type="button" class="star" title="1순위 표시">★</button></div>
+          <div class="item"><label class="opt"><input type="checkbox">취합 데이터 자동 집계 리포트</label><button type="button" class="star" title="1순위 표시">★</button></div>
         </div>
       </div>
       <div class="cat-block">
         <h3>C. 지식 — 묻지 않아도 아는 회사</h3>
-        <div class="opts grid2">
-          <label class="opt"><input type="checkbox">사내 위키 AI 질의응답 (규정·매뉴얼 검색)</label>
-          <label class="opt"><input type="checkbox">신규 입사자 온보딩 가이드 자동화</label>
+        <div class="opts grid2 catopts">
+          <div class="item"><label class="opt"><input type="checkbox">사내 위키 AI 질의응답 (규정·매뉴얼 검색)</label><button type="button" class="star" title="1순위 표시">★</button></div>
+          <div class="item"><label class="opt"><input type="checkbox">신규 입사자 온보딩 가이드 자동화</label><button type="button" class="star" title="1순위 표시">★</button></div>
         </div>
-      </div>
-      <div class="rank">
-        <div class="rk"><b>1순위</b><input type="text" class="inl" id="rank1" placeholder="선택한 항목을 적어 주세요" style="flex:1"></div>
-        <div class="rk"><b>예비</b><input type="text" class="inl" id="rank2" placeholder="선택한 항목을 적어 주세요" style="flex:1"></div>
       </div>
     </div>
 
@@ -797,7 +794,26 @@ function trackDone(t){
   document.addEventListener('input', function(e){ clearMissing(e.target); window.updateProgress(); });
 
   Array.prototype.slice.call(document.querySelectorAll('.star')).forEach(function(btn){
-    btn.addEventListener('click', function(){ btn.classList.toggle('on'); });
+    btn.addEventListener('click', function(){
+      var goingOn = !btn.classList.contains('on');
+      var inCatalog = !!btn.closest('.catalog');
+      if(!goingOn){ btn.classList.remove('on'); window.updateProgress(); return; }
+      if(inCatalog){
+        // 1순위 = 별표 1개만, 별표 시 선택(체크)도 함께
+        Array.prototype.forEach.call(document.querySelectorAll('.catalog .star.on'), function(o){ o.classList.remove('on'); });
+        btn.classList.add('on');
+        var cb = btn.closest('.item').querySelector('input[type=checkbox]');
+        if(cb && !cb.checked) cb.checked = true;
+      } else {
+        // Q8 시급 = 최대 3개
+        var q = btn.closest('.q');
+        var onCount = q ? q.querySelectorAll('.star.on').length : 0;
+        if(onCount >= 3){ toast('시급 표시는 최대 3개까지 선택할 수 있습니다.', true); return; }
+        btn.classList.add('on');
+      }
+      var tr = btn.closest('.track'); if(tr) tr.classList.remove('missing');
+      window.updateProgress();
+    });
   });
 
   window.updateProgress();
@@ -879,15 +895,16 @@ function collectAnswers(){
 
     var catalog = sec.querySelector('.catalog');
     if(catalog){
-      Array.prototype.slice.call(catalog.querySelectorAll('.cat-block')).forEach(function(cb){
-        var h = cb.querySelector('h3').textContent.trim();
-        var picked = readChecked(cb);
-        lines.push('· ' + h + ': ' + (picked || '-'));
+      var firstPick = null, backups = [];
+      Array.prototype.slice.call(catalog.querySelectorAll('.item')).forEach(function(it){
+        var lab = it.querySelector('label.opt');
+        var cb = lab.querySelector('input[type=checkbox]');
+        var text = labelText(lab);
+        if(it.querySelector('.star.on')){ firstPick = text; }
+        else if(cb && cb.checked){ backups.push(text); }
       });
-      var r1 = (document.getElementById('rank1').value||'').trim();
-      var r2 = (document.getElementById('rank2').value||'').trim();
-      lines.push('· 1순위: ' + (r1 || '-'));
-      lines.push('· 예비: ' + (r2 || '-'));
+      lines.push('· 1순위(★): ' + (firstPick || '-'));
+      lines.push('· 예비: ' + (backups.length ? backups.join(', ') : '-'));
     }
 
     Array.prototype.slice.call(sec.querySelectorAll('.q')).forEach(function(q){
