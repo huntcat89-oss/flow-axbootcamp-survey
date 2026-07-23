@@ -913,24 +913,22 @@ function pdfFileName(){
   var company = (document.getElementById('f_company').value || '미입력').replace(/[\\/:*?"<>|]/g,'_');
   return '사전진단_질의서_' + company + '.pdf';
 }
-// PDF 생성 동안 좌측 짤림 방지용 모드(중앙정렬·고정바 제거) 적용
-function withPdfMode(fn){
+// 작성본 PDF 생성 (pdf-mode: 중앙정렬 해제·고정요소 숨김 / windowWidth 미지정으로 좌우 짤림 방지)
+function makePdfBlob(){
+  var el = document.getElementById('sheet');
   var prevY = window.scrollY;
   document.body.classList.add('pdf-mode');
   window.scrollTo(0,0);
   function cleanup(){ document.body.classList.remove('pdf-mode'); window.scrollTo(0, prevY); }
-  return Promise.resolve().then(fn).then(function(v){ cleanup(); return v; }, function(e){ cleanup(); throw e; });
-}
-function pdfWorker(filename){
-  var el = document.getElementById('sheet');
-  var opt = {
-    margin: [8,8,10,8], filename: filename,
+  return html2pdf().set({
+    margin: 8,
     image: { type:'jpeg', quality:0.98 },
-    html2canvas: { scale:2, useCORS:true, backgroundColor:'#ffffff', scrollX:0, scrollY:0, x:0, windowWidth: el.scrollWidth },
+    html2canvas: { scale:2, useCORS:true, backgroundColor:'#ffffff' },
     jsPDF: { unit:'mm', format:'a4', orientation:'portrait' },
-    pagebreak: { mode:['css','legacy'], avoid:['.qsec','.brow','.item','.cat-block'] }
-  };
-  return html2pdf().set(opt).from(el);
+    pagebreak: { mode:['css','legacy'] }
+  }).from(el).toPdf().get('pdf')
+    .then(function(inst){ cleanup(); return inst.output('blob'); })
+    .catch(function(e){ cleanup(); throw e; });
 }
 // 양식 다운로드 = 원본 PDF 다운로드
 function downloadFormPdf(){
@@ -939,22 +937,25 @@ function downloadFormPdf(){
   a.download = '슈퍼100 AX부트캠프_사전진단_질의서.pdf';
   document.body.appendChild(a); a.click(); a.remove();
 }
-// 작성본 PDF 저장 (제출 완료 후)
+// 작성본 PDF 저장
 function downloadPdf(){
   if(typeof html2pdf === 'undefined'){ toast('PDF 라이브러리를 불러오지 못했습니다.', true); return; }
-  withPdfMode(function(){ return pdfWorker(pdfFileName()).save(); });
+  makePdfBlob().then(function(blob){
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = pdfFileName();
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+  }).catch(function(e){ toast('PDF 생성 오류: ' + e.message, true); });
 }
-// PDF → base64 (Blob→FileReader, 안정적)
-function buildPdfBase64(filename){
-  return withPdfMode(function(){
-    return pdfWorker(filename).toPdf().get('pdf').then(function(pdf){
-      var blob = pdf.output('blob');
-      return new Promise(function(resolve, reject){
-        var fr = new FileReader();
-        fr.onload = function(){ resolve(String(fr.result).split(',')[1]); };
-        fr.onerror = reject;
-        fr.readAsDataURL(blob);
-      });
+// PDF → base64
+function buildPdfBase64(){
+  return makePdfBlob().then(function(blob){
+    return new Promise(function(resolve, reject){
+      var fr = new FileReader();
+      fr.onload = function(){ resolve(String(fr.result).split(',')[1]); };
+      fr.onerror = reject;
+      fr.readAsDataURL(blob);
     });
   });
 }
@@ -993,7 +994,7 @@ function submitForm(){
   var title = titleParts.join(' ');
   var filename = pdfFileName();
 
-  buildPdfBase64(filename).then(function(pdfBase64){
+  buildPdfBase64().then(function(pdfBase64){
     return fetch(SEND_ENDPOINT, {
       method:'POST', headers:{ 'Content-Type':'application/json' },
       body: JSON.stringify({ title: title, contents: data.text, filename: filename, pdfBase64: pdfBase64 })

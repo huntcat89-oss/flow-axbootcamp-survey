@@ -18,7 +18,6 @@
 const PROJECT_ID_DEFAULT = "2935035"
 const STATUS_DEFAULT = "request" // request | progress | feedback | complete | hold
 const PRIORITY_DEFAULT = "normal" // low | normal | high | urgent
-const WORKER_DEFAULT = ["byeongkyo@flow.team"] // 담당자 (FLOW_WORKER 콤마구분으로 덮어쓰기)
 
 exports.handler = async (event) => {
     const headers = {
@@ -55,9 +54,6 @@ exports.handler = async (event) => {
         const projectId = process.env.FLOW_PROJECT_ID || PROJECT_ID_DEFAULT
         const status = process.env.FLOW_STATUS || STATUS_DEFAULT
         const priority = process.env.FLOW_PRIORITY || PRIORITY_DEFAULT
-        const workerIds = process.env.FLOW_WORKER
-            ? process.env.FLOW_WORKER.split(",").map((s) => s.trim()).filter(Boolean)
-            : WORKER_DEFAULT
 
         const files = pdfBase64
             ? [{ fileName: filename || "survey.pdf", fileContents: pdfBase64 }]
@@ -68,11 +64,10 @@ exports.handler = async (event) => {
             contents: (contents || "").slice(0, 10000),
             status,
             priority,
-            workers: workerIds.map((id) => ({ workerId: id })),
             files,
         }
 
-        const r = await fetch(
+        const rr = await fetch(
             `https://api.flow.team/user/posts/projects/${projectId}/tasks`,
             {
                 method: "POST",
@@ -83,22 +78,26 @@ exports.handler = async (event) => {
                 body: JSON.stringify(payload),
             }
         )
-
-        let data
-        const raw = await r.text()
+        const raw = await rr.text()
+        let d
         try {
-            data = JSON.parse(raw)
+            d = JSON.parse(raw)
         } catch (e) {
-            data = { raw }
+            d = { raw }
         }
 
-        if (r.ok) return { statusCode: 200, headers, body: JSON.stringify({ success: true, data }) }
+        if (rr.ok)
+            return {
+                statusCode: 200,
+                headers,
+                body: JSON.stringify({ success: true, data: d }),
+            }
         return {
-            statusCode: r.status,
+            statusCode: rr.status,
             headers,
             body: JSON.stringify({
                 success: false,
-                message: (data && data.message) || raw || "Flow 등록 실패",
+                message: (d && d.message) || raw || "Flow 등록 실패",
             }),
         }
     } catch (e) {
