@@ -43,14 +43,15 @@
     font-family:"Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Malgun Gothic",Arial,sans-serif;
     font-size:15.5px; line-height:1.65; letter-spacing:-.01em;
     word-break:keep-all; overflow-wrap:break-word;
-    padding-bottom:76px; /* 하단 고정 바 공간 */
+    padding-top:50px;   /* 상단 고정 바 공간 */
+    padding-bottom:96px; /* 하단 플로팅 제출 버튼 공간 */
   }
 
   /* ===== Sticky progress top bar ===== */
   .progress-bar{
-    position:fixed; left:0; right:0; bottom:0; top:auto; z-index:40;
+    position:fixed; left:0; right:0; top:0; bottom:auto; z-index:40;
     background:linear-gradient(135deg,var(--plum),var(--plum2));
-    color:#fff; box-shadow:0 -6px 20px rgba(44,9,55,.28);
+    color:#fff; box-shadow:0 6px 20px rgba(44,9,55,.28);
   }
   .pb-inner{
     max-width:960px; margin:0 auto; padding:10px 16px;
@@ -58,7 +59,7 @@
   }
   .pb-title{font-size:13.5px; font-weight:700; letter-spacing:.01em; white-space:nowrap; flex:0 0 auto}
   .pb-title span{opacity:.7; font-weight:500}
-  .pb-track{flex:1 1 auto; min-width:48px; height:10px; background:rgba(255,255,255,.22); border-radius:999px; overflow:hidden}
+  .pb-track{flex:0 1 420px; min-width:80px; height:10px; background:rgba(255,255,255,.22); border-radius:999px; overflow:hidden}
   .pb-fill{display:block; height:100%; width:0%; background:linear-gradient(90deg,#d98fe6,#f2d0ff); border-radius:999px; transition:width .25s ease}
   .pb-pct{font-size:14px; font-weight:800; white-space:nowrap; flex:0 0 auto; text-align:right}
   .pb-pct b{font-size:18px}
@@ -194,6 +195,25 @@
   /* 미작성 항목 강조 */
   .track.missing{outline:2px solid #c0392b; outline-offset:4px; border-radius:6px}
 
+  /* 히어로 양식 다운로드 버튼 */
+  .hero-head{display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap}
+  .hero-head h1{flex:1 1 auto; margin:0}
+  .form-dl-btn{flex:0 0 auto; margin-top:4px; background:rgba(255,255,255,.14); color:#fff; border:1px solid rgba(255,255,255,.55); border-radius:999px; padding:10px 18px; font-family:inherit; font-size:13.5px; font-weight:700; cursor:pointer; white-space:nowrap; transition:.15s}
+  .form-dl-btn:hover{background:#fff; color:var(--plum2)}
+
+  /* 하단 플로팅 제출 버튼 */
+  .submit-fab{position:fixed; left:50%; bottom:24px; transform:translateX(-50%); z-index:45; padding:15px 48px; border-radius:999px; border:0; cursor:pointer; font-family:inherit; font-size:16px; font-weight:800; color:#fff; background:linear-gradient(135deg,var(--plum),var(--plum2)); box-shadow:0 12px 30px rgba(44,9,55,.42)}
+  .submit-fab:hover{filter:brightness(1.07)}
+  .submit-fab:disabled{opacity:.6; cursor:default}
+
+  /* PDF 생성 모드 — 중앙정렬 요소 좌측 짤림 방지 */
+  body.pdf-mode{padding:0}
+  body.pdf-mode .progress-bar,
+  body.pdf-mode .submit-fab,
+  body.pdf-mode .toast,
+  body.pdf-mode .form-dl-btn{display:none !important}
+  body.pdf-mode .sheet{margin:0; max-width:none; width:940px; padding:26px 30px 30px}
+
   @media (max-width:780px){
     .sheet{padding:20px 16px 50px}
     header.hero{padding:24px 20px}
@@ -202,17 +222,19 @@
     .opts.grid2,.opts.grid3{grid-template-columns:1fr}
     .brow{grid-template-columns:112px 1fr}
     .rank{grid-template-columns:1fr}
-    .pb-title{display:none}
-    .pb-inner{padding:8px 10px; gap:8px}
-    .pb-pct{font-size:12.5px}
-    .pb-pct b{font-size:16px}
+    .pb-title{font-size:11.5px}
+    .pb-inner{padding:8px 12px; gap:8px}
+    .pb-track{flex:1 1 auto; min-width:24px}
+    .pb-pct{font-size:12px}
+    .pb-pct b{font-size:15px}
     #pbCount{display:none}
-    .pb-actions{gap:6px}
-    .pb-actions button{padding:8px 10px; font-size:12px}
+    .hero-head h1{font-size:23px}
+    .form-dl-btn{font-size:12.5px; padding:9px 15px}
+    .submit-fab{left:16px; right:16px; transform:none; width:auto; padding:14px 0; font-size:15px}
   }
 
   @media print{
-    .progress-bar,.toast,.modal-back{display:none !important}
+    .progress-bar,.toast,.modal-back,.submit-fab,.form-dl-btn{display:none !important}
     body{background:#fff}
     .sheet{padding:8mm 10mm; max-width:none}
     header.hero{-webkit-print-color-adjust:exact; print-color-adjust:exact}
@@ -229,10 +251,6 @@
     <div class="pb-title">슈퍼100 AX 부트캠프 <span>· 사전진단 질의서</span></div>
     <div class="pb-track"><span class="pb-fill" id="pbFill"></span></div>
     <div class="pb-pct"><b id="pbPct">0</b>% <span id="pbCount" style="font-size:12px;opacity:.75"></span></div>
-    <div class="pb-actions">
-      <button class="ghost" onclick="downloadFormPdf()">양식 다운로드</button>
-      <button id="submitBtn" onclick="submitForm()">제출하기</button>
-    </div>
   </div>
 </div>
 
@@ -241,7 +259,10 @@
   <!-- Hero -->
   <header class="hero">
     <div class="eyebrow">SUPER100 AX BOOTCAMP · flow.team</div>
-    <h1>슈퍼100 AX 부트캠프 — 사전진단 질의서</h1>
+    <div class="hero-head">
+      <h1>슈퍼100 AX 부트캠프 — 사전진단 질의서</h1>
+      <button class="form-dl-btn" onclick="downloadFormPdf()">양식 다운로드</button>
+    </div>
     <div class="meta">
       <div class="mk">회사명</div>
       <div class="mv track"><input type="text" id="f_company" placeholder="회사명을 입력해 주세요"></div>
@@ -658,6 +679,9 @@
 
 </div>
 
+<!-- floating submit -->
+<button class="submit-fab" id="submitBtn" onclick="submitForm()">제출하기</button>
+
 <!-- submit overlay (loading / result) -->
 <div class="modal-back" id="overlay">
   <div class="modal" id="overlayCard">
@@ -889,12 +913,20 @@ function pdfFileName(){
   var company = (document.getElementById('f_company').value || '미입력').replace(/[\\/:*?"<>|]/g,'_');
   return '사전진단_질의서_' + company + '.pdf';
 }
+// PDF 생성 동안 좌측 짤림 방지용 모드(중앙정렬·고정바 제거) 적용
+function withPdfMode(fn){
+  var prevY = window.scrollY;
+  document.body.classList.add('pdf-mode');
+  window.scrollTo(0,0);
+  function cleanup(){ document.body.classList.remove('pdf-mode'); window.scrollTo(0, prevY); }
+  return Promise.resolve().then(fn).then(function(v){ cleanup(); return v; }, function(e){ cleanup(); throw e; });
+}
 function pdfWorker(filename){
   var el = document.getElementById('sheet');
   var opt = {
     margin: [8,8,10,8], filename: filename,
     image: { type:'jpeg', quality:0.98 },
-    html2canvas: { scale:2, useCORS:true, backgroundColor:'#ffffff', scrollX:0, scrollY:0, windowWidth: el.scrollWidth },
+    html2canvas: { scale:2, useCORS:true, backgroundColor:'#ffffff', scrollX:0, scrollY:0, x:0, windowWidth: el.scrollWidth },
     jsPDF: { unit:'mm', format:'a4', orientation:'portrait' },
     pagebreak: { mode:['css','legacy'], avoid:['.qsec','.brow','.item','.cat-block'] }
   };
@@ -910,17 +942,19 @@ function downloadFormPdf(){
 // 작성본 PDF 저장 (제출 완료 후)
 function downloadPdf(){
   if(typeof html2pdf === 'undefined'){ toast('PDF 라이브러리를 불러오지 못했습니다.', true); return; }
-  pdfWorker(pdfFileName()).save();
+  withPdfMode(function(){ return pdfWorker(pdfFileName()).save(); });
 }
 // PDF → base64 (Blob→FileReader, 안정적)
 function buildPdfBase64(filename){
-  return pdfWorker(filename).toPdf().get('pdf').then(function(pdf){
-    var blob = pdf.output('blob');
-    return new Promise(function(resolve, reject){
-      var fr = new FileReader();
-      fr.onload = function(){ resolve(String(fr.result).split(',')[1]); };
-      fr.onerror = reject;
-      fr.readAsDataURL(blob);
+  return withPdfMode(function(){
+    return pdfWorker(filename).toPdf().get('pdf').then(function(pdf){
+      var blob = pdf.output('blob');
+      return new Promise(function(resolve, reject){
+        var fr = new FileReader();
+        fr.onload = function(){ resolve(String(fr.result).split(',')[1]); };
+        fr.onerror = reject;
+        fr.readAsDataURL(blob);
+      });
     });
   });
 }

@@ -18,6 +18,7 @@
 const PROJECT_ID_DEFAULT = "2935035"
 const STATUS_DEFAULT = "request" // request | progress | feedback | complete | hold
 const PRIORITY_DEFAULT = "normal" // low | normal | high | urgent
+const WORKER_DEFAULT = ["byeongkyo@flow.team"] // 담당자 (FLOW_WORKER 콤마구분으로 덮어쓰기)
 
 exports.handler = async (event) => {
     const headers = {
@@ -54,6 +55,9 @@ exports.handler = async (event) => {
         const projectId = process.env.FLOW_PROJECT_ID || PROJECT_ID_DEFAULT
         const status = process.env.FLOW_STATUS || STATUS_DEFAULT
         const priority = process.env.FLOW_PRIORITY || PRIORITY_DEFAULT
+        const workerIds = process.env.FLOW_WORKER
+            ? process.env.FLOW_WORKER.split(",").map((s) => s.trim()).filter(Boolean)
+            : WORKER_DEFAULT
 
         const files = pdfBase64
             ? [{ fileName: filename || "survey.pdf", fileContents: pdfBase64 }]
@@ -64,6 +68,7 @@ exports.handler = async (event) => {
             contents: (contents || "").slice(0, 10000),
             status,
             priority,
+            workers: workerIds.map((id) => ({ workerId: id })),
             files,
         }
 
