@@ -1069,7 +1069,7 @@ function submitForm(){
 
   var data = collectAnswers();
   var writer = (document.getElementById('f_writer').value || '').trim();
-  var title = '[사전진단] ' + (data.company || '미입력') + (writer ? ' ' + writer : '');
+  var title = '[사전진단] ' + (data.company || '미입력') + (writer ? ' / ' + writer : '');
   var filename = pdfFileName();
 
   buildPdfBase64().then(function(pdfBase64){
