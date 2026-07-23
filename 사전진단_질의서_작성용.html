@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>슈퍼100 AX 부트캠프 — 사전진단 질의서</title>
+<!-- PDF 생성 라이브러리 (html2pdf = jsPDF + html2canvas) -->
+<script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.2/dist/html2pdf.bundle.min.js"></script>
+<style>
+  :root{
+    --ink:#1a1420;
+    --paper:#ffffff;
+    --bg:#f4f1f5;
+    --line:#d9d2de;
+    --muted:#6b6473;
+    --plum:#4a1259;
+    --plum2:#2c0937;
+    --purple:#5c1f78;
+    --purple2:#6a2a86;
+    --magenta:#a01f8f;
+    --lav:#ede3f2;
+    --lav-soft:#f5ecf9;
+    --lav-border:#7b3f9d;
+    --star:#c0392b;
+    --done:#7b3f9d;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink)}
+  body{
+    font-family:"Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Malgun Gothic",Arial,sans-serif;
+    font-size:15.5px; line-height:1.65; letter-spacing:-.01em;
+    word-break:keep-all; overflow-wrap:break-word;
+  }
+
+  /* ===== Sticky progress top bar ===== */
+  .progress-bar{
+    position:sticky; top:0; z-index:40;
+    background:linear-gradient(135deg,var(--plum),var(--plum2));
+    color:#fff; box-shadow:0 6px 20px rgba(44,9,55,.25);
+  }
+  .pb-inner{
+    max-width:960px; margin:0 auto; padding:11px 20px;
+    display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+  }
+  .pb-title{font-size:13.5px; font-weight:700; letter-spacing:.01em; white-space:nowrap}
+  .pb-title span{opacity:.7; font-weight:500}
+  .pb-track{flex:1; min-width:160px; height:11px; background:rgba(255,255,255,.22); border-radius:999px; overflow:hidden}
+  .pb-fill{display:block; height:100%; width:0%; background:linear-gradient(90deg,#d98fe6,#f2d0ff); border-radius:999px; transition:width .25s ease}
+  .pb-pct{font-size:15px; font-weight:800; white-space:nowrap; min-width:98px; text-align:right}
+  .pb-pct b{font-size:19px}
+  .pb-actions{display:flex; gap:8px}
+  .pb-actions button{
+    background:#fff; color:var(--plum2); border:0; padding:8px 15px;
+    font-family:inherit; font-size:13px; font-weight:700; cursor:pointer;
+    border-radius:6px; white-space:nowrap;
+  }
+  .pb-actions button.ghost{background:rgba(255,255,255,.14); color:#fff; border:1px solid rgba(255,255,255,.4)}
+  .pb-actions button:hover{opacity:.9}
+  .pb-actions button:disabled{opacity:.6; cursor:default}
+
+  .sheet{max-width:960px; margin:0 auto; padding:28px 40px 70px}
+
+  /* ===== Header hero ===== */
+  header.hero{
+    background:linear-gradient(135deg,var(--plum),var(--plum2));
+    color:#fff; border-radius:10px; padding:36px 34px 32px; margin-bottom:24px;
+  }
+  header.hero .eyebrow{font-size:12.5px; letter-spacing:.16em; color:#e6cff0; margin-bottom:10px}
+  header.hero h1{margin:0; font-size:33px; font-weight:800; letter-spacing:-.02em; line-height:1.2}
+
+  .meta{
+    display:grid; grid-template-columns:140px 1fr; gap:0;
+    margin-top:22px; border:1px solid var(--line); border-radius:8px; overflow:hidden; background:#fff;
+  }
+  .meta .mk{padding:12px 14px; background:var(--lav); color:var(--purple); font-weight:700; font-size:13.5px; border-bottom:1px solid var(--line)}
+  .meta .mv{padding:10px 12px; border-bottom:1px solid var(--line); border-left:1px solid var(--line); display:flex; align-items:center}
+  .meta > div:nth-last-child(-n+2){border-bottom:0}
+  .meta input{width:100%; border:0; outline:0; font-family:inherit; font-size:15px; color:var(--ink); background:transparent; padding:2px 0}
+  .meta .fixed{font-size:13.5px; color:var(--muted)}
+
+  .intro{
+    background:var(--lav-soft); border-left:4px solid var(--lav-border);
+    border-radius:0 8px 8px 0; padding:15px 18px; margin-bottom:30px;
+  }
+  .intro b{color:var(--purple)}
+  .intro .it{font-weight:700; color:var(--purple); margin-bottom:6px; font-size:15px}
+  .intro p{margin:3px 0; font-size:14px; color:#3a3340}
+
+  /* ===== Sections ===== */
+  section.qsec{margin-bottom:30px; page-break-inside:avoid}
+  .sec-head{display:flex; align-items:center; gap:0; margin-bottom:14px; border-bottom:2px solid var(--purple)}
+  .sec-num{background:var(--purple); color:#fff; font-weight:800; font-size:15.5px; padding:8px 14px; border-radius:6px 6px 0 0; letter-spacing:.02em}
+  .sec-title{padding:6px 16px; font-size:20px; font-weight:800; letter-spacing:-.02em; color:#241a2c}
+
+  .subgrid{border:1px solid var(--line); border-radius:8px; overflow:hidden; background:#fff}
+  .brow{display:grid; grid-template-columns:160px 1fr; border-bottom:1px solid var(--line)}
+  .brow:last-child{border-bottom:0}
+  .brow .blabel{padding:12px 14px; background:var(--lav); color:var(--purple); font-weight:700; font-size:14px; display:flex; align-items:center}
+  .brow .bval{padding:11px 14px; border-left:1px solid var(--line)}
+
+  .q{margin:18px 0 4px}
+  .q-title{font-weight:800; font-size:15.5px; margin-bottom:9px; color:var(--magenta)}
+  .q-title .qh{font-size:12.5px; color:var(--muted); font-weight:500; margin-left:6px}
+  .q-note{font-size:13.5px; color:var(--muted); margin:0 0 10px}
+
+  .catlbl{font-size:14px; font-weight:700; color:var(--purple); background:var(--lav); padding:6px 12px; border-radius:5px; margin:12px 0 8px; display:inline-block}
+
+  /* option layouts */
+  .opts{display:flex; flex-wrap:wrap; gap:9px 20px}
+  .opts.col{flex-direction:column; gap:9px}
+  .opts.grid2{display:grid; grid-template-columns:1fr 1fr; gap:9px 22px}
+  .opts.grid3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:9px 18px}
+
+  label.opt{display:inline-flex; align-items:flex-start; gap:9px; cursor:pointer; font-size:14.5px; color:#2c2534; padding:3px 0; line-height:1.45}
+  label.opt input[type=checkbox],label.opt input[type=radio]{
+    appearance:none; -webkit-appearance:none; margin:0; flex:0 0 auto;
+    width:19px; height:19px; border:1.7px solid #b3a7bd; border-radius:4px;
+    background:#fff; cursor:pointer; position:relative; margin-top:1px; transition:.12s;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact;
+  }
+  label.opt input[type=radio]{border-radius:50%}
+  label.opt input:checked{
+    background:var(--purple) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.4 6.4L5 9L9.6 3.2' stroke='%23ffffff' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/13px 13px no-repeat;
+    border-color:var(--purple);
+  }
+  label.opt:has(input:checked){color:var(--purple); font-weight:600}
+
+  .inl{border:0; border-bottom:1.4px solid #b3a7bd; outline:0; font-family:inherit; font-size:14px; padding:1px 4px; min-width:70px; background:transparent; color:var(--ink)}
+  .inl:focus{border-color:var(--purple)}
+  .inl.wide{min-width:220px}
+
+  /* star toggle for Q8 urgency */
+  .star{appearance:none;-webkit-appearance:none; margin:0 0 0 4px; width:22px; height:22px; border:0; background:transparent; cursor:pointer; font-size:17px; color:#cfc6d6; line-height:1; padding:0; flex:0 0 auto; align-self:center}
+  .star.on{color:var(--star)}
+  .star:hover{color:var(--star)}
+  .item{display:flex; align-items:flex-start}
+
+  textarea.writein{width:100%; min-height:66px; border:1px dashed var(--lav-border); border-radius:6px; background:#faf6fc; padding:11px 12px; font-family:inherit; font-size:14.5px; color:var(--ink); resize:vertical; outline:0; margin-top:6px}
+  textarea.writein:focus{border-style:solid; border-color:var(--purple)}
+  input.writein-line{width:100%; border:1px dashed var(--lav-border); border-radius:6px; background:#faf6fc; padding:10px 12px; font-family:inherit; font-size:14.5px; color:var(--ink); outline:0; margin-top:6px}
+
+  .catalog{border:1px solid var(--line); border-radius:8px; padding:16px 18px; background:#fff}
+  .catalog .cat-block{margin-bottom:14px}
+  .catalog .cat-block:last-of-type{margin-bottom:0}
+  .catalog h3{margin:0 0 8px; font-size:15px; color:var(--purple); font-weight:800; background:var(--lav); padding:8px 12px; border-radius:5px}
+  .rank{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:14px}
+  .rank .rk{display:flex; align-items:center; gap:8px}
+  .rank .rk b{color:var(--purple); font-size:14px; white-space:nowrap}
+
+  .thanks{background:var(--lav-soft); border-left:4px solid var(--lav-border); border-radius:0 8px 8px 0; padding:16px 18px; margin-top:28px; font-size:14px; color:#3a3340}
+  .thanks b{color:var(--purple)}
+
+  /* toast */
+  .toast{position:fixed; left:50%; bottom:28px; transform:translateX(-50%) translateY(20px); background:var(--plum2); color:#fff; padding:13px 22px; border-radius:8px; font-size:14px; box-shadow:0 12px 30px rgba(0,0,0,.25); opacity:0; pointer-events:none; transition:.3s; z-index:60; max-width:88%}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+  .toast.err{background:#8a1f1f}
+
+  /* confirm modal */
+  .modal-back{position:fixed; inset:0; background:rgba(28,9,36,.5); display:none; align-items:center; justify-content:center; z-index:70; padding:20px}
+  .modal-back.show{display:flex}
+  .modal{background:#fff; border-radius:14px; max-width:420px; width:100%; padding:26px 26px 22px; box-shadow:0 24px 60px rgba(0,0,0,.3)}
+  .modal h3{margin:0 0 10px; font-size:18px; color:var(--purple2)}
+  .modal p{margin:0 0 6px; font-size:14.5px; color:#3a3340}
+  .modal .sub{font-size:12.5px; color:var(--muted)}
+  .modal-actions{display:flex; gap:10px; margin-top:20px; justify-content:flex-end}
+  .mbtn{border:0; padding:10px 18px; border-radius:8px; font-family:inherit; font-size:14px; font-weight:700; cursor:pointer}
+  .mbtn.cancel{background:var(--lav); color:var(--purple2)}
+  .mbtn.ok{background:linear-gradient(135deg,var(--plum),var(--plum2)); color:#fff}
+  .mbtn:disabled{opacity:.6; cursor:default}
+
+  @media (max-width:780px){
+    .sheet{padding:20px 16px 50px}
+    header.hero{padding:24px 20px}
+    header.hero h1{font-size:25px}
+    .meta{grid-template-columns:104px 1fr}
+    .opts.grid2,.opts.grid3{grid-template-columns:1fr}
+    .brow{grid-template-columns:112px 1fr}
+    .rank{grid-template-columns:1fr}
+    .pb-title{display:none}
+  }
+
+  @media print{
+    .progress-bar,.toast,.modal-back{display:none !important}
+    body{background:#fff}
+    .sheet{padding:8mm 10mm; max-width:none}
+    header.hero{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+    section.qsec{page-break-inside:avoid}
+    .subgrid,.catalog,.meta{page-break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== Sticky progress top bar ===== -->
+<div class="progress-bar">
+  <div class="pb-inner">
+    <div class="pb-title">슈퍼100 AX 부트캠프 <span>· 사전진단 질의서</span></div>
+    <div class="pb-track"><span class="pb-fill" id="pbFill"></span></div>
+    <div class="pb-pct"><b id="pbPct">0</b>% <span id="pbCount" style="font-size:12px;opacity:.75"></span></div>
+    <div class="pb-actions">
+      <button class="ghost" onclick="window.print()">PDF 저장</button>
+      <button id="emailBtn" onclick="openConfirm()">이메일 발송</button>
+    </div>
+  </div>
+</div>
+
+<div class="sheet" id="sheet">
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="eyebrow">SUPER100 AX BOOTCAMP · flow.team</div>
+    <h1>슈퍼100 AX 부트캠프 — 사전진단 질의서</h1>
+    <div class="meta">
+      <div class="mk">회사명</div>
+      <div class="mv track"><input type="text" id="f_company" placeholder="회사명을 입력해 주세요"></div>
+      <div class="mk">작성자 (직책)</div>
+      <div class="mv track"><input type="text" id="f_writer" placeholder="성함 · 직책"></div>
+      <div class="mk">작성일</div>
+      <div class="mv track"><input type="text" id="f_date" placeholder="YYYY-MM-DD"></div>
+      <div class="mk">제출 기한</div>
+      <div class="mv"><span class="fixed">선발 안내 메일 수신 후 5영업일 이내 · byeongkyo@flow.team</span></div>
+    </div>
+  </header>
+
+  <!-- Intro -->
+  <div class="intro">
+    <div class="it">작성 안내 (15~20분 소요)</div>
+    <p>① 대부분 체크 문항입니다. 보기에 없는 항목은 무리해서 선택하지 않아도 됩니다.</p>
+    <p>② 현재 상황을 있는 그대로 체크해 주실수록 담당 멘토가 맞춤 코칭을 준비하는 데 도움이 됩니다.</p>
+    <p>③ 경영진과 실무자가 함께 작성해 주세요.</p>
+  </div>
+
+  <!-- ===== 01 ===== -->
+  <section class="qsec">
+    <div class="sec-head"><div class="sec-num">01</div><div class="sec-title">회사 기본 정보</div></div>
+    <div class="subgrid">
+      <div class="brow">
+        <div class="blabel">임직원 수</div>
+        <div class="bval track"><div class="opts">
+          <label class="opt"><input type="checkbox">10명 미만</label>
+          <label class="opt"><input type="checkbox">10~30명</label>
+          <label class="opt"><input type="checkbox">31~100명</label>
+          <label class="opt"><input type="checkbox">101~300명</label>
+          <label class="opt"><input type="checkbox">300명 이상</label>
+        </div></div>
+      </div>
+      <div class="brow">
+        <div class="blabel">상장 여부</div>
+        <div class="bval track"><div class="opts">
+          <label class="opt"><input type="checkbox">코스닥·코스피 상장</label>
+          <label class="opt"><input type="checkbox">상장 준비 중</label>
+          <label class="opt"><input type="checkbox">비상장</label>
+        </div></div>
+      </div>
+      <div class="brow">
+        <div class="blabel">경영 스폰서</div>
+        <div class="bval track"><input type="text" class="inl wide" placeholder="성함 · 직책 :" style="width:100%"></div>
+      </div>
+      <div class="brow">
+        <div class="blabel">실무 챔피언</div>
+        <div class="bval track"><input type="text" class="inl wide" placeholder="성함 · 직책 · 소속팀 :" style="width:100%"></div>
+      </div>
+      <div class="brow">
+        <div class="blabel">플로우 사용 현황</div>
+        <div class="bval track"><div class="opts">
+          <label class="opt"><input type="checkbox">사용 중 (기간: <input type="text" class="inl" placeholder="___" style="min-width:90px">)</label>
+          <label class="opt"><input type="checkbox">무료 체험 중</label>
+          <label class="opt"><input type="checkbox">도입 예정</label>
+        </div></div>
+      </div>
+      <div class="brow">
+        <div class="blabel">사내 IT/개발 인력</div>
+        <div class="bval track"><div class="opts">
+          <label class="opt"><input type="checkbox">있음 (약 <input type="text" class="inl" placeholder="___" style="min-width:44px">명)</label>
+          <label class="opt"><input type="checkbox">없음 — 바이브코딩 트랙 배정에만 활용</label>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="q track">
+      <div class="q-title">Q1. 업종을 선택해 주세요.</div>
+      <div class="opts grid3" data-max="1">
+        <label class="opt"><input type="checkbox">제조</label>
+        <label class="opt"><input type="checkbox">유통·이커머스</label>
+        <label class="opt"><input type="checkbox">IT·스타트업</label>
+        <label class="opt"><input type="checkbox">전문서비스 (회계·법무·에이전시)</label>
+        <label class="opt"><input type="checkbox">건설·엔지니어링</label>
+        <label class="opt"><input type="checkbox">금융·핀테크</label>
+        <label class="opt"><input type="checkbox">헬스케어·바이오</label>
+        <label class="opt"><input type="checkbox">교육·공공·비영리</label>
+        <label class="opt"><input type="checkbox">기타 (<input type="text" class="inl" placeholder="___" style="min-width:90px">)</label>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 02 ===== -->
+  <section class="qsec">
+    <div class="sec-head"><div class="sec-num">02</div><div class="sec-title">현재 업무 방식 진단 (AS-IS)</div></div>
+
+    <div class="q track">
+      <div class="q-title">Q2. 현재 사용 중인 도구를 모두 체크해 주세요.</div>
+      <div class="catlbl">업무 소통</div>
+      <div class="opts grid2">
+        <label class="opt"><input type="checkbox">카카오톡·카카오워크</label>
+        <label class="opt"><input type="checkbox">슬랙 / 팀즈</label>
+        <label class="opt"><input type="checkbox">이메일 중심</label>
+        <label class="opt"><input type="checkbox">전화·구두 중심</label>
+      </div>
+      <div class="catlbl">파일·문서</div>
+      <div class="opts grid2">
+        <label class="opt"><input type="checkbox">구글 드라이브 / 워크스페이스</label>
+        <label class="opt"><input type="checkbox">MS 오피스·원드라이브</label>
+        <label class="opt"><input type="checkbox">개인 PC·NAS</label>
+        <label class="opt"><input type="checkbox">노션 등 문서 도구</label>
+      </div>
+      <div class="catlbl">업무·프로젝트 관리</div>
+      <div class="opts grid2">
+        <label class="opt"><input type="checkbox">엑셀·수기 관리</label>
+        <label class="opt"><input type="checkbox">전용 도구 사용 중 (<input type="text" class="inl" placeholder="___" style="min-width:100px">)</label>
+        <label class="opt"><input type="checkbox">ERP·그룹웨어 내 기능</label>
+        <label class="opt"><input type="checkbox">별도 도구 없음</label>
+      </div>
+    </div>
+
+    <div class="q track">
+      <div class="q-title">Q3. 업무 지시·요청은 주로 어떻게 이뤄집니까? <span class="qh">1개 선택</span></div>
+      <div class="opts">
+        <label class="opt"><input type="checkbox">구두·전화로</label>
+        <label class="opt"><input type="checkbox">카톡·메신저로</label>
+        <label class="opt"><input type="checkbox">이메일로</label>
+        <label class="opt"><input type="checkbox">회의에서 정하고 각자 기억</label>
+        <label class="opt"><input type="checkbox">협업툴에 업무로 등록</label>
+      </div>
+    </div>
+
+    <div class="q track">
+      <div class="q-title">Q4. 업무 진행 상황은 주로 어떻게 파악합니까? <span class="qh">1개 선택</span></div>
+      <div class="opts">
+        <label class="opt"><input type="checkbox">담당자에게 그때그때 물어봄</label>
+        <label class="opt"><input type="checkbox">주간회의에서 구두 보고</label>
+        <label class="opt"><input type="checkbox">엑셀·문서로 취합</label>
+        <label class="opt"><input type="checkbox">협업툴 화면에서 실시간 확인</label>
+      </div>
+    </div>
+
+    <div class="q track">
+      <div class="q-title">Q5. 회의록은 어떻게 관리됩니까? <span class="qh">1개 선택</span></div>
+      <div class="opts">
+        <label class="opt"><input type="checkbox">따로 남기지 않는다</label>
+        <label class="opt"><input type="checkbox">개인이 각자 메모</label>
+        <label class="opt"><input type="checkbox">공유 문서에 그때그때</label>
+        <label class="opt"><input type="checkbox">정해진 양식으로 한곳에 축적</label>
+      </div>
+    </div>
+
+    <div class="q track">
+      <div class="q-title">Q6. 우리 회사의 협업 방식은 어느 단계에 가깝습니까? <span class="qh">1개 선택</span></div>
+      <div class="opts grid2">
+        <label class="opt"><input type="checkbox">Lv.1 구두·메신저로 일한다 (기록이 남지 않음)</label>
+        <label class="opt"><input type="checkbox">Lv.2 엑셀·문서를 공유하며 일한다</label>
+        <label class="opt"><input type="checkbox">Lv.3 협업툴을 쓰지만 일부 팀·일부 기능만</label>
+        <label class="opt"><input type="checkbox">Lv.4 협업툴이 업무의 중심이다</label>
+      </div>
+    </div>
+
+    <div class="q track">
+      <div class="q-title">Q7. (플로우 사용 기업만) 현재 쓰고 있는 플로우 기능을 모두 체크해 주세요. <span class="qh">도입 예정 기업은 '관심 있는 기능 체크'</span></div>
+      <div class="opts grid2">
+        <label class="opt"><input type="checkbox">프로젝트·업무 관리</label>
+        <label class="opt"><input type="checkbox">간트차트·일정</label>
+        <label class="opt"><input type="checkbox">위키·문서</label>
+        <label class="opt"><input type="checkbox">드라이브(파일)</label>
+        <label class="opt"><input type="checkbox">OKR·목표 관리</label>
+        <label class="opt"><input type="checkbox">리패턴 AI (요약·검색 등)</label>
+        <label class="opt"><input type="checkbox">Open API·연동</label>
+        <label class="opt"><input type="checkbox">게시판·소통 위주로만</label>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 03 ===== -->
+  <section class="qsec">
+    <div class="sec-head"><div class="sec-num">03</div><div class="sec-title">반복 업무 진단</div></div>
+
+    <div class="q track">
+      <div class="q-title">Q8. 우리 회사에서 반복적으로 시간이 소요되는 업무를 모두 체크하고, 가장 시급한 것 3개에 ★ 별표 체크해 주세요.</div>
+      <p class="q-note">각 항목 오른쪽 ★ 를 눌러 가장 시급한 업무 3개를 표시할 수 있습니다.</p>
+
+      <div class="catlbl">보고·취합</div>
+      <div class="opts grid2 q8">
+        <div class="item"><label class="opt"><input type="checkbox">주간/월간 실적 보고서를 손으로 만든다</label><button type="button" class="star" title="시급 표시">★</button></div>
+        <div class="item"><label class="opt"><input type="checkbox">여러 팀 자료를 모아 취합·재입력한다</label><button type="button" class="star" title="시급 표시">★</button></div>
+        <div class="item"><label class="opt"><input type="checkbox">경영진 보고용 자료를 매번 새로 만든다</label><button type="button" class="star" title="시급 표시">★</button></div>
+        <div class="item"><label class="opt"><input type="checkbox">회의록을 만들고 공유하는 일이 밀린다</label><button type="button" class="star" title="시급 표시">★</button></div>
+      </div>
+
+      <div class="catlbl">소통·추적</div>
+      <div class="opts grid2 q8">
+        <div class="item"><label class="opt"><input type="checkbox">“그거 어떻게 됐어요?”를 매일 묻고 답한다</label><button type="button" class="star" title="시급 표시">★</button></div>
+        <div class="item"><label class="opt"><input type="checkbox">“그 파일 어디 있어요?”가 하루에도 여러 번</label><button type="button" class="star" title="시급 표시">★</button></div>
+        <div class="item"><label class="opt"><input type="checkbox">업무 요청이 메신저에 흩어져 누락된다</label><button type="button" class="star" title="시급 표시">★</button></div>
+        <div class="item"><label class="opt"><input type="checkbox">담당자 부재 시 히스토리를 찾을 수 없다</label><button type="button" class="star" title="시급 표시">★</button></div>
+      </div>
+
+      <div class="catlbl">문서·지식</div>
+      <div class="opts grid2 q8">
+        <div class="item"><label class="opt"><input type="checkbox">업무 매뉴얼이 없어 구두로 전수한다</label><button type="button" class="star" title="시급 표시">★</button></div>
+        <div class="item"><label class="opt"><input type="checkbox">신규 입사자에게 같은 설명을 반복한다</label><button type="button" class="star" title="시급 표시">★</button></div>
+        <div class="item"><label class="opt"><input type="checkbox">같은 질문에 반복해서 답한다</label><button type="button" class="star" title="시급 표시">★</button></div>
+        <div class="item"><label class="opt"><input type="checkbox">문서 최신 버전이 무엇인지 혼란스럽다</label><button type="button" class="star" title="시급 표시">★</button></div>
+      </div>
+
+      <div class="catlbl">프로세스·데이터</div>
+      <div class="opts grid2 q8">
+        <div class="item"><label class="opt"><input type="checkbox">발주·입고·검수 등 진행 단계 추적이 수작업</label><button type="button" class="star" title="시급 표시">★</button></div>
+        <div class="item"><label class="opt"><input type="checkbox">고객 문의 처리가 누락되거나 지연된다</label><button type="button" class="star" title="시급 표시">★</button></div>
+        <div class="item"><label class="opt"><input type="checkbox">마감·일정을 놓치는 일이 반복된다</label><button type="button" class="star" title="시급 표시">★</button></div>
+        <div class="item"><label class="opt"><input type="checkbox">엑셀↔메일을 오가며 복사·붙여넣기한다</label><button type="button" class="star" title="시급 표시">★</button></div>
+      </div>
+    </div>
+
+    <div class="q track">
+      <div class="q-title">Q9. 우선 체크한 업무에 팀 전체가 쓰는 시간은 대략 얼마입니까? <span class="qh">1개 선택</span></div>
+      <div class="opts">
+        <label class="opt"><input type="checkbox">주당 5시간 미만</label>
+        <label class="opt"><input type="checkbox">주당 5~10시간</label>
+        <label class="opt"><input type="checkbox">주당 10~20시간</label>
+        <label class="opt"><input type="checkbox">주당 20시간 이상</label>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 04 ===== -->
+  <section class="qsec">
+    <div class="sec-head"><div class="sec-num">04</div><div class="sec-title">목표 관리 현황</div></div>
+
+    <div class="q track">
+      <div class="q-title">Q10. 목표 관리는 어떻게 하고 있습니까? <span class="qh">1개 선택</span></div>
+      <div class="opts">
+        <label class="opt"><input type="checkbox">연간 매출 목표 정도만 있다</label>
+        <label class="opt"><input type="checkbox">부서별 KPI가 있다</label>
+        <label class="opt"><input type="checkbox">OKR을 운영 중이다</label>
+        <label class="opt"><input type="checkbox">체계적인 목표 관리가 없다</label>
+      </div>
+    </div>
+
+    <div class="q track">
+      <div class="q-title">Q11. 목표 점검은 얼마나 자주 합니까? <span class="qh">1개 선택</span></div>
+      <div class="opts">
+        <label class="opt"><input type="checkbox">주간</label>
+        <label class="opt"><input type="checkbox">월간</label>
+        <label class="opt"><input type="checkbox">분기</label>
+        <label class="opt"><input type="checkbox">정기 점검이 없다</label>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 05 ===== -->
+  <section class="qsec">
+    <div class="sec-head"><div class="sec-num">05</div><div class="sec-title">AI·디지털 이해 수준</div></div>
+
+    <div class="q track">
+      <div class="q-title">Q12. 임직원들의 AI 사용은 어느 정도입니까? <span class="qh">1개 선택</span></div>
+      <div class="opts">
+        <label class="opt"><input type="checkbox">대부분이 업무에 매일 쓴다</label>
+        <label class="opt"><input type="checkbox">일부 담당자만 쓴다</label>
+        <label class="opt"><input type="checkbox">개인적 호기심 수준</label>
+        <label class="opt"><input type="checkbox">거의 쓰지 않는다</label>
+      </div>
+    </div>
+
+    <div class="q track">
+      <div class="q-title">Q13. 실무 챔피언 본인의 AI 활용 수준은? <span class="qh">1개 선택</span></div>
+      <div class="opts grid2">
+        <label class="opt"><input type="checkbox">거의 써본 적 없다</label>
+        <label class="opt"><input type="checkbox">검색 대신 가끔 물어보는 정도</label>
+        <label class="opt"><input type="checkbox">업무 문서·이메일 작성에 자주 활용한다</label>
+        <label class="opt"><input type="checkbox">프롬프트를 다듬어 반복 업무에 활용한다</label>
+        <label class="opt"><input type="checkbox">API·자동화 도구까지 연결해 써봤다</label>
+        <label class="opt"><input type="checkbox">코드를 직접 다룰 수 있다</label>
+      </div>
+    </div>
+
+    <div class="q track">
+      <div class="q-title">Q14. '바이브코딩(AI와 대화하며 프로그램 만들기)'에 대해 어느 정도 아십니까? <span class="qh">1개 선택</span></div>
+      <div class="opts">
+        <label class="opt"><input type="checkbox">처음 듣는다</label>
+        <label class="opt"><input type="checkbox">들어봤지만 잘 모른다</label>
+        <label class="opt"><input type="checkbox">개념은 안다</label>
+        <label class="opt"><input type="checkbox">직접 해봤다 (Claude·Cursor·Lovable 등)</label>
+      </div>
+    </div>
+
+    <div class="q track">
+      <div class="q-title">Q15. 다음 중 설명할 수 있는 개념을 모두 체크해 주세요. <span class="qh">모르는 항목은 체크하지 않아도 됩니다</span></div>
+      <div class="opts grid3">
+        <label class="opt"><input type="checkbox">프롬프트</label>
+        <label class="opt"><input type="checkbox">AI 에이전트</label>
+        <label class="opt"><input type="checkbox">API</label>
+        <label class="opt"><input type="checkbox">MCP</label>
+        <label class="opt"><input type="checkbox">노코드 자동화 (재피어 등)</label>
+        <label class="opt"><input type="checkbox">해당 없음</label>
+      </div>
+    </div>
+
+    <div class="q track">
+      <div class="q-title">Q16. 바이브코딩 실습에서 희망하는 트랙은? <span class="qh">1개 선택</span></div>
+      <div class="opts">
+        <label class="opt"><input type="checkbox">A트랙: 코드를 몰라도 따라 하는 트랙</label>
+        <label class="opt"><input type="checkbox">B트랙: API까지 직접 다루는 심화 트랙</label>
+        <label class="opt"><input type="checkbox">멘토 추천에 맡긴다</label>
+      </div>
+    </div>
+
+    <div class="q track">
+      <div class="q-title">Q17. AI 도입을 망설이게 하는 것이 있다면? <span class="qh">해당하는 것 모두 선택</span></div>
+      <div class="opts">
+        <label class="opt"><input type="checkbox">보안·정보 유출 우려</label>
+        <label class="opt"><input type="checkbox">비용</label>
+        <label class="opt"><input type="checkbox">무엇부터 할지 모름</label>
+        <label class="opt"><input type="checkbox">직원 활용 역량</label>
+        <label class="opt"><input type="checkbox">없음</label>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 06 ===== -->
+  <section class="qsec">
+    <div class="sec-head"><div class="sec-num">06</div><div class="sec-title">AI에게 맡기고 싶은 일</div></div>
+
+    <div class="q track">
+      <div class="q-title">Q18. AI가 대신해 주면 좋겠는 일을 2개 골라 주세요. <span class="qh">2개 선택</span></div>
+      <div class="opts grid2">
+        <label class="opt"><input type="checkbox">회의록·긴 문서를 요약해 주는 것</label>
+        <label class="opt"><input type="checkbox">사내 문서·규정을 검색해 답해 주는 것</label>
+        <label class="opt"><input type="checkbox">기획문서를 올리면 업무로 만들어 주는 것</label>
+        <label class="opt"><input type="checkbox">주간 진행 브리핑을 자동으로 써 주는 것</label>
+        <label class="opt"><input type="checkbox">업무를 맡기면 진행·보고까지 해 주는 것</label>
+        <label class="opt"><input type="checkbox">반복 데이터 정리·집계를 대신해 주는 것</label>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 07 ===== -->
+  <section class="qsec">
+    <div class="sec-head"><div class="sec-num">07</div><div class="sec-title">4주 후 만들고 싶은 것</div></div>
+    <div class="intro" style="margin-bottom:16px">
+      <p style="font-weight:700;color:var(--purple)">아래는 슈퍼100 AX 부트캠프 참가 기업이 4주 안에 직접 만들어 가져가는 것들의 카탈로그입니다.</p>
+      <p>1순위 1개, 예비 1개에 체크해 주세요. 최종 주제는 담당 멘토와 함께 우리 회사에 맞게 다듬습니다.</p>
+    </div>
+
+    <div class="catalog track">
+      <div class="cat-block">
+        <h3>A. 대시보드 — 한눈에 보는 화면</h3>
+        <div class="opts grid2">
+          <label class="opt"><input type="checkbox">경영 현황판 (매출·핵심지표·업무 진척)</label>
+          <label class="opt"><input type="checkbox">팀별 업무 현황판 (누가 무엇을, 어디까지)</label>
+          <label class="opt"><input type="checkbox">프로젝트 진척 대시보드 (지연·리스크 표시)</label>
+          <label class="opt"><input type="checkbox">OKR 목표 진척 대시보드</label>
+          <label class="opt"><input type="checkbox">고객 문의(CS) 처리 현황판</label>
+          <label class="opt"><input type="checkbox">영업 파이프라인 현황판</label>
+        </div>
+      </div>
+      <div class="cat-block">
+        <h3>B. 자동화 — 손이 가던 일을 없애기</h3>
+        <div class="opts grid2">
+          <label class="opt"><input type="checkbox">주간 보고서 자동 생성·발송</label>
+          <label class="opt"><input type="checkbox">회의록 → 할 일 자동 등록</label>
+          <label class="opt"><input type="checkbox">마감 임박·지연 업무 자동 알림</label>
+          <label class="opt"><input type="checkbox">아침 업무 브리핑 자동 발송</label>
+          <label class="opt"><input type="checkbox">반복 업무 자동 생성·배정 (매주/매월)</label>
+          <label class="opt"><input type="checkbox">취합 데이터 자동 집계 리포트</label>
+        </div>
+      </div>
+      <div class="cat-block">
+        <h3>C. 지식 — 묻지 않아도 아는 회사</h3>
+        <div class="opts grid2">
+          <label class="opt"><input type="checkbox">사내 위키 AI 질의응답 (규정·매뉴얼 검색)</label>
+          <label class="opt"><input type="checkbox">신규 입사자 온보딩 가이드 자동화</label>
+        </div>
+      </div>
+      <div class="rank">
+        <div class="rk"><b>1순위</b><input type="text" class="inl" id="rank1" placeholder="선택한 항목을 적어 주세요" style="flex:1"></div>
+        <div class="rk"><b>예비</b><input type="text" class="inl" id="rank2" placeholder="선택한 항목을 적어 주세요" style="flex:1"></div>
+      </div>
+    </div>
+
+    <div class="q track">
+      <div class="q-title">Q19. 1순위로 선택한 이유를 한 줄로 적어 주세요. <span class="qh">예: "주간보고에 매주 팀장 3명이 반나절씩 쓴다"</span></div>
+      <textarea class="writein" id="q19" placeholder="1순위로 선택한 이유를 적어 주세요."></textarea>
+    </div>
+
+    <div class="q track">
+      <div class="q-title">Q20. 1순위 과제와 관련해 현재 들어가는 시간은? <span class="qh">1개 선택</span></div>
+      <div class="opts">
+        <label class="opt"><input type="checkbox">주당 2시간 미만</label>
+        <label class="opt"><input type="checkbox">주당 2~5시간</label>
+        <label class="opt"><input type="checkbox">주당 5~10시간</label>
+        <label class="opt"><input type="checkbox">주당 10시간 이상</label>
+        <label class="opt"><input type="checkbox">시간보다 누락·지연이 문제</label>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 08 ===== -->
+  <section class="qsec">
+    <div class="sec-head"><div class="sec-num">08</div><div class="sec-title">참여 준비 확인</div></div>
+    <div class="subgrid" style="padding:16px 18px">
+      <div class="opts col track">
+        <label class="opt"><input type="checkbox">경영진(대표 또는 C레벨)이 1주차·4주차 세션에 참석할 수 있습니다.</label>
+        <label class="opt"><input type="checkbox">실무 챔피언이 주 4시간 이상 투입할 수 있습니다.</label>
+        <label class="opt"><input type="checkbox">참가자 2인이 노트북을 지참해 실습에 참여할 수 있습니다.</label>
+        <label class="opt"><input type="checkbox">회사명과 성과가 담긴 성공사례 콘텐츠 공개에 동의합니다.</label>
+        <label class="opt"><input type="checkbox">사내 보안정책상 외부 SaaS·API 사용에 제약이 있습니다 → 있다면 내용을 기재해 주세요 :</label>
+      </div>
+      <input type="text" class="writein-line" id="q_security" placeholder="보안 제약이 있다면 내용을 기재해 주세요.">
+    </div>
+  </section>
+
+  <div class="thanks">
+    <p style="font-weight:700;color:var(--purple);margin-top:0">작성해 주셔서 감사합니다.</p>
+    <p>응답 내용은 선발 심사 및 담당 멘토의 코칭 설계에 활용되며, 그 외 목적으로 외부에 공유되지 않습니다.</p>
+    <p style="margin-bottom:0">제출: <b>byeongkyo@flow.team</b> · 기타 문의: https://flow.team/ko/academy/ax-bootcamp 하단 FAQ 참고</p>
+  </div>
+
+</div>
+
+<!-- confirm modal -->
+<div class="modal-back" id="modalBack">
+  <div class="modal">
+    <h3>이메일 발송</h3>
+    <p>작성하신 내용을 <b>PDF로 만들어</b> <b>byeongkyo@flow.team</b> 으로 발송할까요?</p>
+    <p class="sub">발송 후에는 담당 멘토가 응답 내용을 검토합니다.</p>
+    <div class="modal-actions">
+      <button class="mbtn cancel" id="mCancel" onclick="closeConfirm()">취소</button>
+      <button class="mbtn ok" id="mOk" onclick="doSend()">발송하기</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   발송 엔드포인트 (Netlify Functions · Resend)
+   이 폼을 발송 함수와 같은 Netlify 사이트에 올리면 아래 상대경로 그대로 동작합니다.
+   (netlify.toml 의 redirect: /api/send → /.netlify/functions/send)
+   다른 곳(예: Framer)에 올릴 경우 전체 URL로 바꾸세요.
+   예: https://your-site.netlify.app/api/send
+   ========================================================= */
+var SEND_ENDPOINT = "/api/send";
+
+(function(){
+  var tracks = Array.prototype.slice.call(document.querySelectorAll('.track'));
+
+  function trackDone(t){
+    var checks = t.querySelectorAll('input[type=checkbox], input[type=radio]');
+    for(var i=0;i<checks.length;i++){ if(checks[i].checked) return true; }
+    var texts = t.querySelectorAll('input[type=text], textarea');
+    for(var j=0;j<texts.length;j++){ if(texts[j].value.trim()!=='') return true; }
+    return false;
+  }
+
+  var fill = document.getElementById('pbFill');
+  var pctEl = document.getElementById('pbPct');
+  var countEl = document.getElementById('pbCount');
+
+  function update(){
+    var done = 0;
+    for(var i=0;i<tracks.length;i++){ if(trackDone(tracks[i])) done++; }
+    var pct = tracks.length ? Math.round(done/tracks.length*100) : 0;
+    fill.style.width = pct + '%';
+    pctEl.textContent = pct;
+    countEl.textContent = '(' + done + '/' + tracks.length + ')';
+  }
+
+  // 단일/제한 선택 강제: 회사 기본정보(.bval)·data-max·"1개 선택"/"2개 선택" 문항
+  function enforce(cb){
+    if(!cb.checked) return;
+    var group=null, max=0;
+    var bval = cb.closest('.bval');
+    var attrEl = cb.closest('[data-max]');
+    if(bval){ group=bval; max=1; }
+    else if(attrEl){ group=attrEl; max=parseInt(attrEl.getAttribute('data-max'),10); }
+    else {
+      var q = cb.closest('.q');
+      if(q){
+        var t = q.querySelector('.q-title').textContent;
+        if(t.indexOf('1개 선택')>=0){ group=q; max=1; }
+        else if(t.indexOf('2개 선택')>=0){ group=q; max=2; }
+      }
+    }
+    if(!group || !max) return;
+    var checks = group.querySelectorAll('input[type=checkbox]');
+    if(max===1){
+      Array.prototype.forEach.call(checks, function(o){ if(o!==cb) o.checked=false; });
+    } else {
+      var c = Array.prototype.filter.call(checks, function(x){ return x.checked; });
+      if(c.length>max){ cb.checked=false; }
+    }
+  }
+
+  document.addEventListener('change', function(e){
+    var t = e.target;
+    if(t && t.matches && t.matches('input[type=checkbox]')) enforce(t);
+    update();
+  });
+  document.addEventListener('input', update);
+
+  Array.prototype.slice.call(document.querySelectorAll('.star')).forEach(function(btn){
+    btn.addEventListener('click', function(){ btn.classList.toggle('on'); });
+  });
+
+  update();
+})();
+
+function toast(msg, isErr){
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isErr ? ' err' : '');
+  setTimeout(function(){ t.className = 'toast'; }, 4600);
+}
+
+function labelText(lab){
+  var txt = '';
+  Array.prototype.slice.call(lab.childNodes).forEach(function(n){
+    if(n.nodeType === 3){ txt += n.textContent; }
+    else if(n.nodeName === 'INPUT' && n.type==='text'){ txt += (n.value.trim() || '___'); }
+    else if(n.nodeType === 1){ txt += n.textContent; }
+  });
+  return txt.replace(/\s+/g,' ').trim();
+}
+
+function readChecked(el){
+  var out = [];
+  Array.prototype.slice.call(el.querySelectorAll('label.opt')).forEach(function(lab){
+    var cb = lab.querySelector('input[type=checkbox], input[type=radio]');
+    if(cb && cb.checked){ out.push(labelText(lab)); }
+  });
+  return out.join(' / ');
+}
+
+function readAnswer(el){
+  var parts = [];
+  Array.prototype.slice.call(el.querySelectorAll('.item')).forEach(function(it){
+    var lab = it.querySelector('label.opt');
+    var cb = lab ? lab.querySelector('input[type=checkbox]') : null;
+    if(cb && cb.checked){
+      var star = it.querySelector('.star.on') ? ' ★' : '';
+      parts.push(labelText(lab) + star);
+    }
+  });
+  Array.prototype.slice.call(el.querySelectorAll('label.opt')).forEach(function(lab){
+    if(lab.closest('.item')) return;
+    var cb = lab.querySelector('input[type=checkbox], input[type=radio]');
+    if(cb && cb.checked){ parts.push(labelText(lab)); }
+  });
+  Array.prototype.slice.call(el.querySelectorAll('input[type=text], textarea')).forEach(function(inp){
+    if(inp.closest('label.opt')) return;
+    var v = inp.value.trim();
+    if(v) parts.push(v);
+  });
+  return parts.join(', ');
+}
+
+function collectAnswers(){
+  var lines = [];
+  var company = (document.getElementById('f_company').value || '').trim();
+  var writer  = (document.getElementById('f_writer').value || '').trim();
+  var date    = (document.getElementById('f_date').value || '').trim();
+
+  lines.push('■ 슈퍼100 AX 부트캠프 — 사전진단 질의서');
+  lines.push('────────────────────────────');
+  lines.push('회사명: ' + (company || '-'));
+  lines.push('작성자(직책): ' + (writer || '-'));
+  lines.push('작성일: ' + (date || '-'));
+  lines.push('');
+
+  Array.prototype.slice.call(document.querySelectorAll('section.qsec')).forEach(function(sec){
+    var num = sec.querySelector('.sec-num').textContent.trim();
+    var title = sec.querySelector('.sec-title').textContent.trim();
+    lines.push('');
+    lines.push('【 ' + num + ' ' + title + ' 】');
+
+    Array.prototype.slice.call(sec.querySelectorAll('.brow')).forEach(function(row){
+      var label = row.querySelector('.blabel').textContent.trim();
+      var val = readAnswer(row.querySelector('.bval'));
+      lines.push('· ' + label + ': ' + (val || '-'));
+    });
+
+    var catalog = sec.querySelector('.catalog');
+    if(catalog){
+      Array.prototype.slice.call(catalog.querySelectorAll('.cat-block')).forEach(function(cb){
+        var h = cb.querySelector('h3').textContent.trim();
+        var picked = readChecked(cb);
+        lines.push('· ' + h + ': ' + (picked || '-'));
+      });
+      var r1 = (document.getElementById('rank1').value||'').trim();
+      var r2 = (document.getElementById('rank2').value||'').trim();
+      lines.push('· 1순위: ' + (r1 || '-'));
+      lines.push('· 예비: ' + (r2 || '-'));
+    }
+
+    Array.prototype.slice.call(sec.querySelectorAll('.q')).forEach(function(q){
+      var qt = q.querySelector('.q-title').textContent.replace(/\s+/g,' ').trim();
+      var val = readAnswer(q);
+      lines.push('· ' + qt);
+      lines.push('   → ' + (val || '(미응답)'));
+    });
+
+    var col = sec.querySelector('.opts.col');
+    if(col && !sec.querySelector('.q')){
+      var picked = readChecked(col);
+      lines.push('· 참여 준비: ' + (picked || '-'));
+      var sec2 = document.getElementById('q_security');
+      if(sec2 && sec2.value.trim()) lines.push('· 보안 제약 내용: ' + sec2.value.trim());
+    }
+  });
+
+  return { text: lines.join('\n'), company: company, date: date };
+}
+
+/* ===== confirm modal ===== */
+function openConfirm(){ document.getElementById('modalBack').classList.add('show'); }
+function closeConfirm(){ document.getElementById('modalBack').classList.remove('show'); }
+
+/* ===== PDF 생성 → base64 ===== */
+function buildPdfBase64(filename){
+  var el = document.getElementById('sheet');
+  var opt = {
+    margin: [8,8,10,8],
+    filename: filename,
+    image: { type:'jpeg', quality:0.98 },
+    html2canvas: { scale:2, useCORS:true, backgroundColor:'#ffffff', scrollX:0, scrollY:0, windowWidth: el.scrollWidth },
+    jsPDF: { unit:'mm', format:'a4', orientation:'portrait' },
+    pagebreak: { mode:['css','legacy'], avoid:['.qsec','.brow','.item','.cat-block'] }
+  };
+  var worker = html2pdf().set(opt).from(el);
+  return worker.toPdf().get('pdf').then(function(pdf){
+    return pdf.output('datauristring').split(',')[1]; // base64 본문만
+  });
+}
+
+/* ===== 실제 발송 (서버리스 엔드포인트 + PDF 첨부) ===== */
+function doSend(){
+  var okBtn = document.getElementById('mOk');
+  var cancelBtn = document.getElementById('mCancel');
+
+  if(!SEND_ENDPOINT || SEND_ENDPOINT.indexOf('YOUR-') >= 0){
+    closeConfirm();
+    toast('발송 설정 필요: SEND_ENDPOINT 주소를 입력해 주세요.', true);
+    return;
+  }
+  if(typeof html2pdf === 'undefined'){
+    closeConfirm();
+    toast('PDF 라이브러리를 불러오지 못했습니다. 네트워크를 확인해 주세요.', true);
+    return;
+  }
+
+  okBtn.disabled = true; cancelBtn.disabled = true;
+  okBtn.textContent = '발송 중…';
+
+  var data = collectAnswers();
+  var subjParts = ['[슈퍼100 AX 부트캠프 사전진단 질의서]'];
+  if(data.company) subjParts.push(data.company);
+  if(data.date) subjParts.push(data.date);
+  var subject = subjParts.join(' ');
+  var safeName = (data.company || '미입력').replace(/[\\/:*?"<>|]/g,'_');
+  var filename = '사전진단_질의서_' + safeName + '.pdf';
+
+  buildPdfBase64(filename).then(function(pdfBase64){
+    return fetch(SEND_ENDPOINT, {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({
+        subject: subject,
+        message: data.text,
+        company: data.company,
+        date: data.date,
+        filename: filename,
+        pdfBase64: pdfBase64
+      })
+    });
+  }).then(function(res){ return res.json(); })
+    .then(function(json){
+      closeConfirm();
+      okBtn.disabled = false; cancelBtn.disabled = false;
+      okBtn.textContent = '발송하기';
+      if(json && json.success){
+        toast('발송되었습니다. 감사합니다!');
+      } else {
+        toast('발송 실패: ' + ((json && json.message) || '알 수 없는 오류'), true);
+      }
+    })
+    .catch(function(err){
+      closeConfirm();
+      okBtn.disabled = false; cancelBtn.disabled = false;
+      okBtn.textContent = '발송하기';
+      toast('발송 중 오류가 발생했습니다: ' + err.message, true);
+    });
+}
+</script>
+</body>
+</html>

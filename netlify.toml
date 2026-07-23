@@ -1,0 +1,19 @@
+# Netlify 설정
+# - publish: 저장소 루트를 그대로 정적 호스팅 (HTML 폼 포함)
+# - functions: 서버리스 함수 위치
+# - redirect: /api/send  →  /.netlify/functions/send  (호출 주소를 깔끔하게)
+
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/api/send"
+  to = "/.netlify/functions/send"
+  status = 200
+
+# HTML 폼을 사이트 첫 화면으로 쓰려면 파일명을 index.html 로 두거나 아래 주석을 해제하세요.
+# [[redirects]]
+#   from = "/"
+#   to = "/사전진단_질의서_작성용.html"
+#   status = 200
