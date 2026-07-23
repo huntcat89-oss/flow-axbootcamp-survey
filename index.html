@@ -213,6 +213,14 @@
   body.pdf-mode .toast,
   body.pdf-mode .form-dl-btn{display:none !important}
   body.pdf-mode .sheet{margin:0; max-width:none; width:940px; padding:26px 30px 30px}
+  /* 좁은 창에서도 항상 데스크톱 레이아웃으로 캡처(모바일 1열/짤림 방지) */
+  body.pdf-mode .meta{grid-template-columns:140px 1fr !important}
+  body.pdf-mode .brow{grid-template-columns:160px 1fr !important}
+  body.pdf-mode .opts.grid2{grid-template-columns:1fr 1fr !important}
+  body.pdf-mode .opts.grid3{grid-template-columns:1fr 1fr 1fr !important}
+  body.pdf-mode .rank{grid-template-columns:1fr 1fr !important}
+  body.pdf-mode header.hero{padding:36px 34px 32px !important}
+  body.pdf-mode header.hero h1{font-size:33px !important}
 
   @media (max-width:780px){
     .sheet{padding:20px 16px 50px}
@@ -923,7 +931,8 @@ function makePdfBlob(){
   return html2pdf().set({
     margin: 8,
     image: { type:'jpeg', quality:0.98 },
-    html2canvas: { scale:2, useCORS:true, backgroundColor:'#ffffff' },
+    // windowWidth/width 고정 → 좁은 창(모바일)에서도 데스크톱 폭(1000px)으로 캡처(짤림 방지)
+    html2canvas: { scale:2, useCORS:true, backgroundColor:'#ffffff', windowWidth:1000, width:1000 },
     jsPDF: { unit:'mm', format:'a4', orientation:'portrait' },
     pagebreak: { mode:['css','legacy'] }
   }).from(el).toPdf().get('pdf')
