@@ -1,25 +1,23 @@
-// 슈퍼100 AX 사전진단 질의서 — 이메일 발송 Netlify Function
+// 슈퍼100 AX 사전진단 질의서 — 제출(Flow 업무 등록) Netlify Function
+//
+// 동작: 폼 응답을 Flow(플로우) 프로젝트에 "업무"로 등록하고 PDF를 첨부합니다.
+//   POST https://api.flow.team/user/posts/projects/{projectId}/tasks
+//   헤더 x-flow-api-key 로 인증 → 인증된 사용자가 작성자.
+//   files[] = { fileName, fileContents(base64) } 로 PDF 첨부.
 //
 // 배포:
-//   1) 이 파일을 저장소의  netlify/functions/send.js  위치에 둡니다.
-//   2) GitHub 저장소를 Netlify에 연결(Add new site → Import from GitHub).
-//   3) Netlify → Site settings → Environment variables 에 등록:
-//        RESEND_API_KEY = re_xxxxxxxx        (https://resend.com 에서 발급) ← 이것만 필수
-//   4) 수신자(TO)/발신자(FROM)는 아래 소스 기본값으로 반영됨(환경변수 불필요).
-//        - TO_DEFAULT   : 받는 사람 (여러 명 가능)
-//        - FROM_DEFAULT : 보내는 주소 (운영 시 flow.team 도메인 인증 후 noreply@flow.team 로 교체)
-//      필요하면 MAIL_TO(콤마 구분)/MAIL_FROM 환경변수로 덮어쓸 수 있음.
-//   5) 함수 URL:  https://<사이트>.netlify.app/.netlify/functions/send
-//      netlify.toml 의 redirect 로  /api/send  로도 호출 가능.
+//   Netlify → Site settings → Environment variables 에 등록:
+//     FLOW_API_KEY = xxxxxxxx   ← 이것만 필수 (관리 페이지에서 발급)
+//   프로젝트 ID / 상태 / 우선순위는 아래 소스 기본값으로 반영됨(환경변수 불필요).
+//     FLOW_PROJECT_ID / FLOW_STATUS / FLOW_PRIORITY 로 덮어쓸 수 있음.
+//
+// 요청(JSON): { title, contents, filename, pdfBase64 }
+// 응답(JSON): { success: true } 또는 { success: false, message }
 
 // 소스 기본값 (환경변수 없이 동작)
-const TO_DEFAULT = ["byeongkyo@flow.team", "huntcat89@gmail.com"]
-// flow.team 도메인을 Resend에 인증한 뒤 이 주소로 2명에게 발송됩니다.
-// (인증 전에는 Resend가 발신 도메인 미인증으로 거부합니다.)
-const FROM_DEFAULT = "noreply@flow.team"
-//
-// 요청(JSON): { subject, message, company, date, filename, pdfBase64 }
-// 응답(JSON): { success: true } 또는 { success: false, message }
+const PROJECT_ID_DEFAULT = "2935035"
+const STATUS_DEFAULT = "request" // request | progress | feedback | complete | hold
+const PRIORITY_DEFAULT = "normal" // low | normal | high | urgent
 
 exports.handler = async (event) => {
     const headers = {
@@ -40,61 +38,62 @@ exports.handler = async (event) => {
 
     try {
         const body = JSON.parse(event.body || "{}")
-        const { subject, message, company, date, filename, pdfBase64 } = body
+        const { title, contents, filename, pdfBase64 } = body
 
-        const apiKey = process.env.RESEND_API_KEY
+        const apiKey = process.env.FLOW_API_KEY
         if (!apiKey)
             return {
                 statusCode: 500,
                 headers,
                 body: JSON.stringify({
                     success: false,
-                    message: "RESEND_API_KEY 미설정",
+                    message: "FLOW_API_KEY 미설정",
                 }),
             }
 
-        const to = process.env.MAIL_TO
-            ? process.env.MAIL_TO.split(",").map((s) => s.trim()).filter(Boolean)
-            : TO_DEFAULT
-        const from = process.env.MAIL_FROM || FROM_DEFAULT
+        const projectId = process.env.FLOW_PROJECT_ID || PROJECT_ID_DEFAULT
+        const status = process.env.FLOW_STATUS || STATUS_DEFAULT
+        const priority = process.env.FLOW_PRIORITY || PRIORITY_DEFAULT
 
-        const attachments = pdfBase64
-            ? [{ filename: filename || "survey.pdf", content: pdfBase64 }]
+        const files = pdfBase64
+            ? [{ fileName: filename || "survey.pdf", fileContents: pdfBase64 }]
             : []
 
-        const text =
-            (message || "") +
-            (company ? `\n\n회사명: ${company}` : "") +
-            (date ? `\n작성일: ${date}` : "")
+        const payload = {
+            title: (title || "슈퍼100 AX 부트캠프 사전진단 질의서").slice(0, 200),
+            contents: (contents || "").slice(0, 10000),
+            status,
+            priority,
+            files,
+        }
 
-        const r = await fetch("https://api.resend.com/emails", {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${apiKey}`,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                from: `슈퍼100 AX 사전진단 <${from}>`,
-                to: to,
-                subject: subject || "슈퍼100 AX 부트캠프 사전진단 질의서",
-                text,
-                attachments,
-            }),
-        })
-
-        const data = await r.json()
-        if (r.ok)
-            return {
-                statusCode: 200,
-                headers,
-                body: JSON.stringify({ success: true, id: data.id }),
+        const r = await fetch(
+            `https://api.flow.team/user/posts/projects/${projectId}/tasks`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "x-flow-api-key": apiKey,
+                },
+                body: JSON.stringify(payload),
             }
+        )
+
+        let data
+        const raw = await r.text()
+        try {
+            data = JSON.parse(raw)
+        } catch (e) {
+            data = { raw }
+        }
+
+        if (r.ok) return { statusCode: 200, headers, body: JSON.stringify({ success: true, data }) }
         return {
-            statusCode: 400,
+            statusCode: r.status,
             headers,
             body: JSON.stringify({
                 success: false,
-                message: data.message || JSON.stringify(data),
+                message: (data && data.message) || raw || "Flow 등록 실패",
             }),
         }
     } catch (e) {

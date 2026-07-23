@@ -4,6 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>슈퍼100 AX 부트캠프 — 사전진단 질의서</title>
+<!-- favicon (flow.team) -->
+<link rel="icon" href="https://framerusercontent.com/images/fklIy6qL3eQ8Rl4ohMZwxwAtX5I.png" media="(prefers-color-scheme: light)">
+<link rel="icon" href="https://framerusercontent.com/images/yy5Qa12Wy04crmqTf2fRVHT3G4.png" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="https://framerusercontent.com/images/fklIy6qL3eQ8Rl4ohMZwxwAtX5I.png">
+<!-- Open Graph / 썸네일 (flow.team) -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="슈퍼100 AX 부트캠프 — 사전진단 질의서">
+<meta property="og:description" content="플로우 슈퍼100 AX 부트캠프 사전진단 질의서. 현재 업무 방식을 진단하고 4주 후 만들고 싶은 것을 선택해 주세요.">
+<meta property="og:image" content="https://framerusercontent.com/assets/dqdUaWSEVpWtrIwIppKL5DWpk.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="슈퍼100 AX 부트캠프 — 사전진단 질의서">
+<meta name="twitter:description" content="플로우 슈퍼100 AX 부트캠프 사전진단 질의서.">
+<meta name="twitter:image" content="https://framerusercontent.com/assets/dqdUaWSEVpWtrIwIppKL5DWpk.png">
 <!-- PDF 생성 라이브러리 (html2pdf = jsPDF + html2canvas) -->
 <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.2/dist/html2pdf.bundle.min.js"></script>
 <style>
@@ -30,25 +43,26 @@
     font-family:"Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Malgun Gothic",Arial,sans-serif;
     font-size:15.5px; line-height:1.65; letter-spacing:-.01em;
     word-break:keep-all; overflow-wrap:break-word;
+    padding-bottom:76px; /* 하단 고정 바 공간 */
   }
 
   /* ===== Sticky progress top bar ===== */
   .progress-bar{
-    position:sticky; top:0; z-index:40;
+    position:fixed; left:0; right:0; bottom:0; top:auto; z-index:40;
     background:linear-gradient(135deg,var(--plum),var(--plum2));
-    color:#fff; box-shadow:0 6px 20px rgba(44,9,55,.25);
+    color:#fff; box-shadow:0 -6px 20px rgba(44,9,55,.28);
   }
   .pb-inner{
-    max-width:960px; margin:0 auto; padding:11px 20px;
-    display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+    max-width:960px; margin:0 auto; padding:10px 16px;
+    display:flex; align-items:center; gap:12px; flex-wrap:nowrap;
   }
-  .pb-title{font-size:13.5px; font-weight:700; letter-spacing:.01em; white-space:nowrap}
+  .pb-title{font-size:13.5px; font-weight:700; letter-spacing:.01em; white-space:nowrap; flex:0 0 auto}
   .pb-title span{opacity:.7; font-weight:500}
-  .pb-track{flex:1; min-width:160px; height:11px; background:rgba(255,255,255,.22); border-radius:999px; overflow:hidden}
+  .pb-track{flex:1 1 auto; min-width:48px; height:10px; background:rgba(255,255,255,.22); border-radius:999px; overflow:hidden}
   .pb-fill{display:block; height:100%; width:0%; background:linear-gradient(90deg,#d98fe6,#f2d0ff); border-radius:999px; transition:width .25s ease}
-  .pb-pct{font-size:15px; font-weight:800; white-space:nowrap; min-width:98px; text-align:right}
-  .pb-pct b{font-size:19px}
-  .pb-actions{display:flex; gap:8px}
+  .pb-pct{font-size:14px; font-weight:800; white-space:nowrap; flex:0 0 auto; text-align:right}
+  .pb-pct b{font-size:18px}
+  .pb-actions{display:flex; gap:8px; flex:0 0 auto}
   .pb-actions button{
     background:#fff; color:var(--plum2); border:0; padding:8px 15px;
     font-family:inherit; font-size:13px; font-weight:700; cursor:pointer;
@@ -151,7 +165,7 @@
   .thanks b{color:var(--purple)}
 
   /* toast */
-  .toast{position:fixed; left:50%; bottom:28px; transform:translateX(-50%) translateY(20px); background:var(--plum2); color:#fff; padding:13px 22px; border-radius:8px; font-size:14px; box-shadow:0 12px 30px rgba(0,0,0,.25); opacity:0; pointer-events:none; transition:.3s; z-index:60; max-width:88%}
+  .toast{position:fixed; left:50%; bottom:92px; transform:translateX(-50%) translateY(20px); background:var(--plum2); color:#fff; padding:13px 22px; border-radius:8px; font-size:14px; box-shadow:0 12px 30px rgba(0,0,0,.25); opacity:0; pointer-events:none; transition:.3s; z-index:60; max-width:88%}
   .toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
   .toast.err{background:#8a1f1f}
 
@@ -168,6 +182,18 @@
   .mbtn.ok{background:linear-gradient(135deg,var(--plum),var(--plum2)); color:#fff}
   .mbtn:disabled{opacity:.6; cursor:default}
 
+  /* submit overlay */
+  #overlayCard{text-align:center}
+  #overlayCard h3{color:var(--purple2); margin:6px 0 8px}
+  #overlayCard .modal-actions{justify-content:center}
+  .spinner{width:46px; height:46px; border:4px solid var(--lav); border-top-color:var(--purple); border-radius:50%; margin:6px auto 16px; animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .ov-icon{width:54px; height:54px; border-radius:50%; margin:2px auto 12px; display:flex; align-items:center; justify-content:center; font-size:30px; font-weight:800; color:#fff; background:var(--purple)}
+  .ov-icon.err{background:#8a1f1f}
+
+  /* 미작성 항목 강조 */
+  .track.missing{outline:2px solid #c0392b; outline-offset:4px; border-radius:6px}
+
   @media (max-width:780px){
     .sheet{padding:20px 16px 50px}
     header.hero{padding:24px 20px}
@@ -177,6 +203,12 @@
     .brow{grid-template-columns:112px 1fr}
     .rank{grid-template-columns:1fr}
     .pb-title{display:none}
+    .pb-inner{padding:8px 10px; gap:8px}
+    .pb-pct{font-size:12.5px}
+    .pb-pct b{font-size:16px}
+    #pbCount{display:none}
+    .pb-actions{gap:6px}
+    .pb-actions button{padding:8px 10px; font-size:12px}
   }
 
   @media print{
@@ -198,8 +230,8 @@
     <div class="pb-track"><span class="pb-fill" id="pbFill"></span></div>
     <div class="pb-pct"><b id="pbPct">0</b>% <span id="pbCount" style="font-size:12px;opacity:.75"></span></div>
     <div class="pb-actions">
-      <button class="ghost" onclick="window.print()">PDF 저장</button>
-      <button id="emailBtn" onclick="openConfirm()">이메일 발송</button>
+      <button class="ghost" onclick="downloadFormPdf()">양식 다운로드</button>
+      <button id="submitBtn" onclick="submitForm()">제출하기</button>
     </div>
   </div>
 </div>
@@ -218,7 +250,7 @@
       <div class="mk">작성일</div>
       <div class="mv track"><input type="text" id="f_date" placeholder="YYYY-MM-DD"></div>
       <div class="mk">제출 기한</div>
-      <div class="mv"><span class="fixed">선발 안내 메일 수신 후 5영업일 이내 · byeongkyo@flow.team</span></div>
+      <div class="mv"><span class="fixed">선발 안내 메일 수신 후 5영업일 이내</span></div>
     </div>
   </header>
 
@@ -620,20 +652,28 @@
   <div class="thanks">
     <p style="font-weight:700;color:var(--purple);margin-top:0">작성해 주셔서 감사합니다.</p>
     <p>응답 내용은 선발 심사 및 담당 멘토의 코칭 설계에 활용되며, 그 외 목적으로 외부에 공유되지 않습니다.</p>
-    <p style="margin-bottom:0">제출: <b>byeongkyo@flow.team</b> · 기타 문의: https://flow.team/ko/academy/ax-bootcamp 하단 FAQ 참고</p>
+    <p><b>인쇄하여 수기로 체크하신 경우에는 이메일로 제출 부탁드립니다. smbu@flow.team</b></p>
+    <p style="margin-bottom:0">기타 문의: https://flow.team/ko/academy/ax-bootcamp 하단 FAQ 참고</p>
   </div>
 
 </div>
 
-<!-- confirm modal -->
-<div class="modal-back" id="modalBack">
-  <div class="modal">
-    <h3>이메일 발송</h3>
-    <p>작성하신 내용을 <b>PDF로 만들어</b> <b>byeongkyo@flow.team</b> 으로 발송할까요?</p>
-    <p class="sub">발송 후에는 담당 멘토가 응답 내용을 검토합니다.</p>
-    <div class="modal-actions">
-      <button class="mbtn cancel" id="mCancel" onclick="closeConfirm()">취소</button>
-      <button class="mbtn ok" id="mOk" onclick="doSend()">발송하기</button>
+<!-- submit overlay (loading / result) -->
+<div class="modal-back" id="overlay">
+  <div class="modal" id="overlayCard">
+    <div id="ovLoading">
+      <div class="spinner"></div>
+      <h3>제출하는 중입니다…</h3>
+      <p class="sub">PDF를 만들어 업로드하고 있어요. 잠시만 기다려 주세요.</p>
+    </div>
+    <div id="ovResult" style="display:none">
+      <div id="ovIcon" class="ov-icon">✓</div>
+      <h3 id="ovTitle">제출이 완료되었습니다</h3>
+      <p class="sub" id="ovMsg">작성하신 내용이 등록되었습니다. 감사합니다.</p>
+      <div class="modal-actions">
+        <button class="mbtn cancel" onclick="closeOverlay()">닫기</button>
+        <button class="mbtn ok" onclick="downloadPdf()">PDF로 저장하기</button>
+      </div>
     </div>
   </div>
 </div>
@@ -642,37 +682,38 @@
 
 <script>
 /* =========================================================
-   발송 엔드포인트 (Netlify Functions · Resend)
-   이 폼을 발송 함수와 같은 Netlify 사이트에 올리면 아래 상대경로 그대로 동작합니다.
-   (netlify.toml 의 redirect: /api/send → /.netlify/functions/send)
-   다른 곳(예: Framer)에 올릴 경우 전체 URL로 바꾸세요.
-   예: https://your-site.netlify.app/api/send
+   제출 엔드포인트 (Netlify Functions · Flow 업무 등록)
+   같은 Netlify 사이트에 올리면 아래 상대경로 그대로 동작합니다.
+   (netlify.toml redirect: /api/send → /.netlify/functions/send)
    ========================================================= */
 var SEND_ENDPOINT = "/api/send";
 
+// 양식 다운로드가 내려줄 원본 PDF (저장소 루트에 포함)
+var FORM_PDF_URL = "/" + encodeURIComponent("슈퍼100 AX부트캠프_사전진단_질의서.pdf");
+
+var TRACKS = Array.prototype.slice.call(document.querySelectorAll('.track'));
+
+function trackDone(t){
+  var checks = t.querySelectorAll('input[type=checkbox], input[type=radio]');
+  for(var i=0;i<checks.length;i++){ if(checks[i].checked) return true; }
+  var texts = t.querySelectorAll('input[type=text], textarea');
+  for(var j=0;j<texts.length;j++){ if(texts[j].value.trim()!=='') return true; }
+  return false;
+}
+
 (function(){
-  var tracks = Array.prototype.slice.call(document.querySelectorAll('.track'));
-
-  function trackDone(t){
-    var checks = t.querySelectorAll('input[type=checkbox], input[type=radio]');
-    for(var i=0;i<checks.length;i++){ if(checks[i].checked) return true; }
-    var texts = t.querySelectorAll('input[type=text], textarea');
-    for(var j=0;j<texts.length;j++){ if(texts[j].value.trim()!=='') return true; }
-    return false;
-  }
-
   var fill = document.getElementById('pbFill');
   var pctEl = document.getElementById('pbPct');
   var countEl = document.getElementById('pbCount');
 
-  function update(){
+  window.updateProgress = function(){
     var done = 0;
-    for(var i=0;i<tracks.length;i++){ if(trackDone(tracks[i])) done++; }
-    var pct = tracks.length ? Math.round(done/tracks.length*100) : 0;
+    for(var i=0;i<TRACKS.length;i++){ if(trackDone(TRACKS[i])) done++; }
+    var pct = TRACKS.length ? Math.round(done/TRACKS.length*100) : 0;
     fill.style.width = pct + '%';
     pctEl.textContent = pct;
-    countEl.textContent = '(' + done + '/' + tracks.length + ')';
-  }
+    countEl.textContent = '(' + done + '/' + TRACKS.length + ')';
+  };
 
   // 단일/제한 선택 강제: 회사 기본정보(.bval)·data-max·"1개 선택"/"2개 선택" 문항
   function enforce(cb){
@@ -700,18 +741,24 @@ var SEND_ENDPOINT = "/api/send";
     }
   }
 
+  function clearMissing(target){
+    var tr = target && target.closest ? target.closest('.track') : null;
+    if(tr && trackDone(tr)) tr.classList.remove('missing');
+  }
+
   document.addEventListener('change', function(e){
     var t = e.target;
     if(t && t.matches && t.matches('input[type=checkbox]')) enforce(t);
-    update();
+    clearMissing(t);
+    window.updateProgress();
   });
-  document.addEventListener('input', update);
+  document.addEventListener('input', function(e){ clearMissing(e.target); window.updateProgress(); });
 
   Array.prototype.slice.call(document.querySelectorAll('.star')).forEach(function(btn){
     btn.addEventListener('click', function(){ btn.classList.toggle('on'); });
   });
 
-  update();
+  window.updateProgress();
 })();
 
 function toast(msg, isErr){
@@ -820,83 +867,115 @@ function collectAnswers(){
   return { text: lines.join('\n'), company: company, date: date };
 }
 
-/* ===== confirm modal ===== */
-function openConfirm(){ document.getElementById('modalBack').classList.add('show'); }
-function closeConfirm(){ document.getElementById('modalBack').classList.remove('show'); }
+/* ===== overlay (로딩/완료) ===== */
+function showOverlay(){
+  document.getElementById('ovLoading').style.display = '';
+  document.getElementById('ovResult').style.display = 'none';
+  document.getElementById('overlay').classList.add('show');
+}
+function closeOverlay(){ document.getElementById('overlay').classList.remove('show'); }
+function showResult(ok, title, msg){
+  document.getElementById('ovLoading').style.display = 'none';
+  document.getElementById('ovResult').style.display = '';
+  var icon = document.getElementById('ovIcon');
+  icon.textContent = ok ? '✓' : '!';
+  icon.className = 'ov-icon' + (ok ? '' : ' err');
+  document.getElementById('ovTitle').textContent = title;
+  document.getElementById('ovMsg').textContent = msg;
+}
 
-/* ===== PDF 생성 → base64 ===== */
-function buildPdfBase64(filename){
+/* ===== PDF ===== */
+function pdfFileName(){
+  var company = (document.getElementById('f_company').value || '미입력').replace(/[\\/:*?"<>|]/g,'_');
+  return '사전진단_질의서_' + company + '.pdf';
+}
+function pdfWorker(filename){
   var el = document.getElementById('sheet');
   var opt = {
-    margin: [8,8,10,8],
-    filename: filename,
+    margin: [8,8,10,8], filename: filename,
     image: { type:'jpeg', quality:0.98 },
     html2canvas: { scale:2, useCORS:true, backgroundColor:'#ffffff', scrollX:0, scrollY:0, windowWidth: el.scrollWidth },
     jsPDF: { unit:'mm', format:'a4', orientation:'portrait' },
     pagebreak: { mode:['css','legacy'], avoid:['.qsec','.brow','.item','.cat-block'] }
   };
-  var worker = html2pdf().set(opt).from(el);
-  return worker.toPdf().get('pdf').then(function(pdf){
-    return pdf.output('datauristring').split(',')[1]; // base64 본문만
+  return html2pdf().set(opt).from(el);
+}
+// 양식 다운로드 = 원본 PDF 다운로드
+function downloadFormPdf(){
+  var a = document.createElement('a');
+  a.href = FORM_PDF_URL;
+  a.download = '슈퍼100 AX부트캠프_사전진단_질의서.pdf';
+  document.body.appendChild(a); a.click(); a.remove();
+}
+// 작성본 PDF 저장 (제출 완료 후)
+function downloadPdf(){
+  if(typeof html2pdf === 'undefined'){ toast('PDF 라이브러리를 불러오지 못했습니다.', true); return; }
+  pdfWorker(pdfFileName()).save();
+}
+// PDF → base64 (Blob→FileReader, 안정적)
+function buildPdfBase64(filename){
+  return pdfWorker(filename).toPdf().get('pdf').then(function(pdf){
+    var blob = pdf.output('blob');
+    return new Promise(function(resolve, reject){
+      var fr = new FileReader();
+      fr.onload = function(){ resolve(String(fr.result).split(',')[1]); };
+      fr.onerror = reject;
+      fr.readAsDataURL(blob);
+    });
   });
 }
 
-/* ===== 실제 발송 (서버리스 엔드포인트 + PDF 첨부) ===== */
-function doSend(){
-  var okBtn = document.getElementById('mOk');
-  var cancelBtn = document.getElementById('mCancel');
+/* ===== 미작성 검증 ===== */
+function firstMissing(){
+  Array.prototype.forEach.call(document.querySelectorAll('.track.missing'), function(t){ t.classList.remove('missing'); });
+  var miss = TRACKS.filter(function(t){ return !trackDone(t); });
+  miss.forEach(function(t){ t.classList.add('missing'); });
+  return miss.length ? miss[0] : null;
+}
 
+/* ===== 제출 (Flow 업무 등록 + PDF 첨부) ===== */
+function submitForm(){
+  if(typeof html2pdf === 'undefined'){ toast('PDF 라이브러리를 불러오지 못했습니다.', true); return; }
+
+  var first = firstMissing();
+  if(first){
+    toast('아직 작성하지 않은 항목이 있습니다. 미작성 항목으로 이동합니다.', true);
+    var y = first.getBoundingClientRect().top + window.pageYOffset - 90;
+    window.scrollTo({ top: y, behavior: 'smooth' });
+    return;
+  }
   if(!SEND_ENDPOINT || SEND_ENDPOINT.indexOf('YOUR-') >= 0){
-    closeConfirm();
-    toast('발송 설정 필요: SEND_ENDPOINT 주소를 입력해 주세요.', true);
-    return;
-  }
-  if(typeof html2pdf === 'undefined'){
-    closeConfirm();
-    toast('PDF 라이브러리를 불러오지 못했습니다. 네트워크를 확인해 주세요.', true);
+    toast('제출 설정 필요: SEND_ENDPOINT 주소를 확인해 주세요.', true);
     return;
   }
 
-  okBtn.disabled = true; cancelBtn.disabled = true;
-  okBtn.textContent = '발송 중…';
+  var btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  showOverlay();
 
   var data = collectAnswers();
-  var subjParts = ['[슈퍼100 AX 부트캠프 사전진단 질의서]'];
-  if(data.company) subjParts.push(data.company);
-  if(data.date) subjParts.push(data.date);
-  var subject = subjParts.join(' ');
-  var safeName = (data.company || '미입력').replace(/[\\/:*?"<>|]/g,'_');
-  var filename = '사전진단_질의서_' + safeName + '.pdf';
+  var titleParts = ['[사전진단] ' + (data.company || '미입력')];
+  if(data.date) titleParts.push('(' + data.date + ')');
+  var title = titleParts.join(' ');
+  var filename = pdfFileName();
 
   buildPdfBase64(filename).then(function(pdfBase64){
     return fetch(SEND_ENDPOINT, {
-      method:'POST',
-      headers:{ 'Content-Type':'application/json' },
-      body: JSON.stringify({
-        subject: subject,
-        message: data.text,
-        company: data.company,
-        date: data.date,
-        filename: filename,
-        pdfBase64: pdfBase64
-      })
+      method:'POST', headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({ title: title, contents: data.text, filename: filename, pdfBase64: pdfBase64 })
     });
   }).then(function(res){ return res.json(); })
     .then(function(json){
-      closeConfirm();
-      okBtn.disabled = false; cancelBtn.disabled = false;
-      okBtn.textContent = '발송하기';
+      btn.disabled = false;
       if(json && json.success){
-        toast('발송되었습니다. 감사합니다!');
+        showResult(true, '제출이 완료되었습니다', '작성하신 내용이 담당자에게 등록되었습니다. 감사합니다.');
       } else {
-        toast('발송 실패: ' + ((json && json.message) || '알 수 없는 오류'), true);
+        showResult(false, '제출에 실패했습니다', (json && json.message) || '알 수 없는 오류');
       }
     })
     .catch(function(err){
-      closeConfirm();
-      okBtn.disabled = false; cancelBtn.disabled = false;
-      okBtn.textContent = '발송하기';
-      toast('발송 중 오류가 발생했습니다: ' + err.message, true);
+      btn.disabled = false;
+      showResult(false, '제출 중 오류가 발생했습니다', err.message);
     });
 }
 </script>
