@@ -723,6 +723,15 @@ var SEND_ENDPOINT = "/api/send";
 // 양식 다운로드가 내려줄 원본 PDF (저장소 루트에 포함)
 var FORM_PDF_URL = "/" + encodeURIComponent("슈퍼100 AX부트캠프_사전진단_질의서.pdf");
 
+// 작성일 기본값 = 오늘
+(function(){
+  var el = document.getElementById('f_date');
+  if(el && !el.value){
+    var d = new Date();
+    el.value = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+})();
+
 var TRACKS = Array.prototype.slice.call(document.querySelectorAll('.track'));
 
 function trackDone(t){
@@ -930,9 +939,10 @@ function makePdfBlob(){
   function cleanup(){ document.body.classList.remove('pdf-mode'); window.scrollTo(0, prevY); }
   return html2pdf().set({
     margin: 8,
-    image: { type:'jpeg', quality:0.98 },
-    // windowWidth/width 고정 → 좁은 창(모바일)에서도 데스크톱 폭(1000px)으로 캡처(짤림 방지)
-    html2canvas: { scale:2, useCORS:true, backgroundColor:'#ffffff', windowWidth:1000, width:1000 },
+    image: { type:'jpeg', quality:0.9 },
+    // windowWidth/width 고정 → 좁은 창(모바일)에서도 데스크톱 폭으로 캡처(짤림 방지)
+    // scale는 용량 절감을 위해 1.5 (첨부 전송 실패/타임아웃 방지)
+    html2canvas: { scale:1.5, useCORS:true, backgroundColor:'#ffffff', windowWidth:1000, width:1000 },
     jsPDF: { unit:'mm', format:'a4', orientation:'portrait' },
     pagebreak: { mode:['css','legacy'] }
   }).from(el).toPdf().get('pdf')
@@ -946,16 +956,9 @@ function downloadFormPdf(){
   a.download = '슈퍼100 AX부트캠프_사전진단_질의서.pdf';
   document.body.appendChild(a); a.click(); a.remove();
 }
-// 작성본 PDF 저장
+// 작성본 저장: 브라우저 인쇄 → 'PDF로 저장' (원본 레이아웃 그대로, 짤림 없음)
 function downloadPdf(){
-  if(typeof html2pdf === 'undefined'){ toast('PDF 라이브러리를 불러오지 못했습니다.', true); return; }
-  makePdfBlob().then(function(blob){
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url; a.download = pdfFileName();
-    document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
-  }).catch(function(e){ toast('PDF 생성 오류: ' + e.message, true); });
+  window.print();
 }
 // PDF → base64
 function buildPdfBase64(){
@@ -998,9 +1001,8 @@ function submitForm(){
   showOverlay();
 
   var data = collectAnswers();
-  var titleParts = ['[사전진단] ' + (data.company || '미입력')];
-  if(data.date) titleParts.push('(' + data.date + ')');
-  var title = titleParts.join(' ');
+  var writer = (document.getElementById('f_writer').value || '').trim();
+  var title = '[사전진단] ' + (data.company || '미입력') + (writer ? ' ' + writer : '');
   var filename = pdfFileName();
 
   buildPdfBase64().then(function(pdfBase64){
